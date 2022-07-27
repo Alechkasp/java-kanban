@@ -61,7 +61,8 @@ public class Main {
         System.out.println(tasksManager.getEpics());
 
         System.out.println("Обновить SubTask 7");
-        SubTask subTaskUpdate = new SubTask("Выбрать онлайн-школу", "Описание", "IN_PROGRESS", 4);
+        SubTask subTaskUpdate = new SubTask("Выбрать онлайн-школу", "Описание", "IN_PROGRESS",
+                4);
         subTaskUpdate.setId(7);
         tasksManager.updateSubTask(subTaskUpdate);
 
