@@ -2,33 +2,30 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    private ArrayList<Integer> subTasks = new ArrayList<>();
+    private ArrayList<Integer> subTasksIds;
 
     public Epic(String name, String description, String status) {
         super(name, description, status);
+        subTasksIds = new ArrayList<>();
     }
 
     public ArrayList<Integer> getSubTasks() {
-        return subTasks;
+        return subTasksIds;
     }
 
     //добавить SubTask в Epic
-    public void addSubTaskToEpic(int id) {
-        subTasks.add(id);
+    public void addSubTaskToEpic(int subTaskId) {
+        this.subTasksIds.add(subTaskId);
     }
 
-   //удалить SubTask из Epic
-    public void delSubTaskFromEpic(int id) {
-        subTasks.remove(id);
-    }
-
-    //если удалили все задачи типа SubTask
-    public void delSubTask() {
-        subTasks.clear();
-    }
-
-    //вывод SubTask, принадлежащих определенному Epic
-    public void printEpicSubTasks() {
-        System.out.println(subTasks);
+    //удалить SubTask из Epic
+    public void delSubTaskFromEpic(int subTaskId) {
+        int id = 0;
+        for (int i = 0; i < subTasksIds.size(); i++) {
+            if (subTaskId == subTasksIds.get(i)) {
+                id = i;
+            }
+        }
+        subTasksIds.remove(id);
     }
 }
