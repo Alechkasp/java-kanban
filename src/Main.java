@@ -1,11 +1,8 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
 
         TasksManager tasksManager = new TasksManager();
 
@@ -32,84 +29,77 @@ public class Main {
 
 
         //ПОЛУЧЕНИЕ СПИСКА ВСЕХ ЗАДАЧ
-        System.out.println("Получить список Task: ");
+        System.out.println("Получить список Task:");
         System.out.println(tasksManager.getTasks());
 
-        System.out.println("Получить список Epic: ");
+        System.out.println("Получить список Epic:");
         System.out.println(tasksManager.getEpics());
 
-        System.out.println("Получить список SubTask: ");
+        System.out.println("Получить список SubTask:");
         System.out.println(tasksManager.getSubTasks());
 
 
         //ОБНОВЛЕНИЕ ДАННЫХ
-        System.out.println("Какой Task обновить? ");
-        int taskId = scanner.nextInt();
+        System.out.println("Обновить Task 2");
         Task taskUpdate = new Task("Купить подарок", "Описание покупки подарка", "IN_PROGRESS");
-        taskUpdate.setId(taskId);
+        taskUpdate.setId(2);
         tasksManager.updateTask(taskUpdate);
 
-        System.out.println("Получить список Task: ");
+        System.out.println("Получить список Task:");
         System.out.println(tasksManager.getTasks());
 
-        System.out.println("Какой Epic обновить? ");
-        int epicId = scanner.nextInt();
-        ArrayList<Integer> subTaskList = tasksManager.getEpic(epicId).getSubTasks();
+        System.out.println("Обновить Epic 4");
+        ArrayList<Integer> subTaskList = tasksManager.getEpic(4).getSubTasks();
         Epic epicUpdate = new Epic("Построить дом", "Описание стройки", "");
-        epicUpdate.setId(epicId);
+        epicUpdate.setId(4);
         for (Integer epic : subTaskList) {
             epicUpdate.addSubTaskToEpic(epic);
         }
         tasksManager.updateEpic(epicUpdate);
 
-        System.out.println("Получить список Epic: ");
+        System.out.println("Получить список Epic:");
         System.out.println(tasksManager.getEpics());
 
-        System.out.println("Какой SubTask обновить? ");
-        int subTaskId = scanner.nextInt();
+        System.out.println("Обновить SubTask 7");
         SubTask subTaskUpdate = new SubTask("Выбрать онлайн-школу", "Описание", "IN_PROGRESS", 4);
-        subTaskUpdate.setId(subTaskId);
+        subTaskUpdate.setId(7);
         tasksManager.updateSubTask(subTaskUpdate);
 
-        System.out.println("Получить список SubTask: ");
+        System.out.println("Получить список SubTask:");
         System.out.println(tasksManager.getSubTasks());
 
-        System.out.println("Получить список Epic: ");
+        System.out.println("Получить список Epic:");
         System.out.println(tasksManager.getEpics());
 
 
         //УДАЛЕНИЕ ПО ИДЕНТИФИКАТОРУ
-        System.out.println("Какой Task удалить? ");
-        int delTask = scanner.nextInt();
-        tasksManager.delTask(delTask);
+        System.out.println("Удалить Task 2");
+        tasksManager.delTask(2);
 
-        System.out.println("Получить список Task: ");
+        System.out.println("Получить список Task:");
         System.out.println(tasksManager.getTasks());
 
-        System.out.println("Какой Epic удалить? ");
-        int delEpic = scanner.nextInt();
-        tasksManager.delEpic(delEpic);
+        System.out.println("Удалить Epic 4");
+        tasksManager.delEpic(4);
 
-        System.out.println("Получить список Epic: ");
+        System.out.println("Получить список Epic:");
         System.out.println(tasksManager.getEpics());
 
-        System.out.println("Получить список SubTask: ");
+        System.out.println("Получить список SubTask:");
         System.out.println(tasksManager.getSubTasks());
 
-        System.out.println("Какой SubTask удалить? ");
-        int delSubTask = scanner.nextInt();
-        tasksManager.delSubTask(delSubTask);
+        System.out.println("Удалить SubTask 6");
+        tasksManager.delSubTask(6);
 
-        System.out.println("Получить список Epic: ");
+        System.out.println("Получить список Epic:");
         System.out.println(tasksManager.getEpics());
 
-        System.out.println("Получить список SubTask: ");
+        System.out.println("Получить список SubTask:");
         System.out.println(tasksManager.getSubTasks());
 
 
         //ПОЛУЧЕНИЕ СПИСКА ВСЕХ ПОДЗАДАЧ ОПРЕДЕЛЕННОГО ЭПИКА
-        System.out.println("Задачи какого Epic вы хотите получить? ");
-        int epicIdSubTask = scanner.nextInt();
-        System.out.println(tasksManager.getEpicSubTasks(epicIdSubTask));
+        System.out.println("Получить задачи Epic 3:");
+        System.out.println(tasksManager.getEpicSubTasks(3));
     }
 }

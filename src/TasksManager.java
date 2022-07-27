@@ -3,13 +3,9 @@ import java.util.HashMap;
 
 public class TasksManager {
     int id = 0;
-    HashMap<Integer, Task> tableTasks = new HashMap<>();
-    HashMap<Integer, Epic> tableEpics = new HashMap<>();
-    HashMap<Integer, SubTask> tableSubTasks = new HashMap<>();
-
-/*  у меня все сломалось, когда попробовала разнести классы по пакетам
-    вчера на q/a вебинаре спросила у наставника про пакеты, а он ответил,
-    что такого в задании нет, поэтому это делать не нужно */
+    protected HashMap<Integer, Task> tableTasks = new HashMap<>();
+    protected HashMap<Integer, Epic> tableEpics = new HashMap<>();
+    protected HashMap<Integer, SubTask> tableSubTasks = new HashMap<>();
 
     //добавить задачу типа Task
     public Task addTask(Task task) {
