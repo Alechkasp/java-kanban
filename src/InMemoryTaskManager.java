@@ -1,13 +1,18 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
-public class TasksManager {
+public class InMemoryTaskManager implements TaskManager {
     int id = 0;
     protected HashMap<Integer, Task> tableTasks = new HashMap<>();
     protected HashMap<Integer, Epic> tableEpics = new HashMap<>();
     protected HashMap<Integer, SubTask> tableSubTasks = new HashMap<>();
+    protected List<Task> history = new ArrayList<>();
+
 
     //добавить задачу типа Task
+    @Override
     public Task addTask(Task task) {
         id++;
         task.setId(id);
@@ -16,6 +21,7 @@ public class TasksManager {
     }
 
     //добавить задачу типа Epic
+    @Override
     public Epic addEpic(Epic epic) {
         id++;
         epic.setId(id);
@@ -24,6 +30,7 @@ public class TasksManager {
     }
 
     //добавить задачу SubTask
+    @Override
     public SubTask addSubTask(SubTask subTask) {
         id++;
         subTask.setId(id);
@@ -34,6 +41,7 @@ public class TasksManager {
     }
 
     //получить список все задач типа Task
+    @Override
     public ArrayList<Task> getTasks() {
         ArrayList<Task> tasks = new ArrayList<>();
         for (Integer task : tableTasks.keySet()) {
@@ -43,6 +51,7 @@ public class TasksManager {
     }
 
     //получить список все задач типа Epic
+    @Override
     public ArrayList<Epic> getEpics() {
         ArrayList<Epic> epics = new ArrayList<>();
         for (Integer epic : tableEpics.keySet()) {
@@ -52,6 +61,7 @@ public class TasksManager {
     }
 
     //получить список все задач типа SubTask
+    @Override
     public ArrayList<SubTask> getSubTasks() {
         ArrayList<SubTask> subTasks = new ArrayList<>();
         for (Integer subTask : tableSubTasks.keySet()) {
@@ -61,37 +71,65 @@ public class TasksManager {
     }
 
     //удалить все задачи типа Task
+    @Override
     public void deleteListTasks() {
         tableTasks.clear();
     }
 
     //удалить все задачи типа Epic
+    @Override
     public void deleteListEpics() {
         tableEpics.clear();
         tableSubTasks.clear();
     }
 
     //удалить все задачи типа SubTask
+    @Override
     public void deleteListSubTask() {
         tableSubTasks.clear();
     }
 
     //получение по идентификатору задачи типа Task
+    @Override
     public Task getTask(int id) {
-        return (Task) tableTasks.get(id);
+        if (history.size() < 10) {
+            history.add(tableTasks.get(id));
+        }
+        if (history.size() == 10) {
+            history.remove(0);
+            history.add(tableTasks.get(id));
+        }
+        return tableTasks.get(id); // было return (Task) tableTasks.get(id);
     }
 
     //получение по идентификатору задачи типа Epic
+    @Override
     public Epic getEpic(int id) {
+        if (history.size() < 10) {
+            history.add(tableEpics.get(id));
+        }
+        if (history.size() == 10) {
+            history.remove(0);
+            history.add(tableEpics.get(id));
+        }
         return tableEpics.get(id);
     }
 
     //получение по идентификатору задачи типа SubTask
+    @Override
     public SubTask getSubTask(int id) {
+        if (history.size() < 10) {
+            history.add(tableSubTasks.get(id));
+        }
+        if (history.size() == 10) {
+            history.remove(0);
+            history.add(tableSubTasks.get(id));
+        }
         return tableSubTasks.get(id);
     }
 
     //обновление задачи типа Task
+    @Override
     public void updateTask(Task task) {
         if (tableTasks.containsKey(task.getId())) {
             tableTasks.put(task.getId(), task);
@@ -99,12 +137,14 @@ public class TasksManager {
     }
 
     //обновление задачи типа Epic
+    @Override
     public void updateEpic(Epic epic) {
         tableEpics.put(epic.getId(), epic);
         updateEpicStatus(epic.getId());
     }
 
     //обновление задачи типа SubTask
+    @Override
     public void updateSubTask(SubTask subTask) {
         if (tableSubTasks.containsKey(subTask.getId())) {
             if (tableEpics.containsKey(subTask.getEpicId())) {
@@ -115,11 +155,13 @@ public class TasksManager {
     }
 
     //удаление по идентификатору задачи типа Task
+    @Override
     public void delTask(int id) {
         tableTasks.remove(id);
     }
 
     //удаление по идентификатору задачи типа Epic
+    @Override
     public void delEpic(int id) {
         for (Integer subTask : getEpic(id).getSubTasks()) {
             if (tableSubTasks.containsKey(subTask)) {
@@ -130,6 +172,7 @@ public class TasksManager {
     }
 
     //удаление по идентификатору задачи типа SubTask
+    @Override
     public void delSubTask(int id) {
         getEpic(tableSubTasks.get(id).getEpicId()).delSubTaskFromEpic(id);
         updateEpic(getEpic(tableSubTasks.get(id).getEpicId()));
@@ -137,6 +180,7 @@ public class TasksManager {
     }
 
     //получение списка всех подзадач определённого эпика
+    @Override
     public ArrayList<SubTask> getEpicSubTasks(int id) {
         ArrayList<SubTask> subTaskFromEpic = new ArrayList<>();
         for (Integer subTask : tableSubTasks.keySet()) {
@@ -155,7 +199,7 @@ public class TasksManager {
 
         for (Integer subTask : tableSubTasks.keySet()) {
             if (getEpic(epicId).getSubTasks().contains(subTask)) {
-                if (tableSubTasks.get(subTask).getStatus().equals("NEW")) {
+                if (tableSubTasks.get(subTask).getStatus().equals(Status.NEW)) {
                     countNew++;
                 }
             }
@@ -163,7 +207,7 @@ public class TasksManager {
 
         for (Integer subTask : tableSubTasks.keySet()) {
             if (getEpic(epicId).getSubTasks().contains(subTask)) {
-                if (tableSubTasks.get(subTask).getStatus().equals("DONE")) {
+                if (tableSubTasks.get(subTask).getStatus().equals(Status.DONE)) {
                     countDone++;
                 }
             }
@@ -177,11 +221,17 @@ public class TasksManager {
         boolean withSubTaskStatusDone = countDone == getEpic(epicId).getSubTasks().size();
 
         if (withoutSubTask || withSubTaskStatusNew) {
-            getEpic(epicId).setStatus("NEW");
+            getEpic(epicId).setStatus(Status.NEW);
         } else if (withSubTaskStatusDone) {
-            getEpic(epicId).setStatus("DONE");
+            getEpic(epicId).setStatus(Status.DONE);
         } else {
-            getEpic(epicId).setStatus("IN_PROGRESS");
+            getEpic(epicId).setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    //отображение последних просмотренных задач
+    @Override
+    public List<Task> getHistory() {
+        return history;
     }
 }
