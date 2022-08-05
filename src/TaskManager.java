@@ -60,6 +60,6 @@ public interface TaskManager {
     //получение списка всех подзадач определённого эпика
     ArrayList<SubTask> getEpicSubTasks(int id);
 
-    //отображение последних просмотренных задач
+    //получить список последних просмотренных задач
     List<Task> getHistory();
 }

@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,7 +7,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> tableTasks = new HashMap<>();
     protected HashMap<Integer, Epic> tableEpics = new HashMap<>();
     protected HashMap<Integer, SubTask> tableSubTasks = new HashMap<>();
-    protected List<Task> history = new ArrayList<>();
+    protected InMemoryHistoryManager inMemoryHistoryManager = (InMemoryHistoryManager) Managers.getDefaultHistory();
 
 
     //добавить задачу типа Task
@@ -92,39 +91,21 @@ public class InMemoryTaskManager implements TaskManager {
     //получение по идентификатору задачи типа Task
     @Override
     public Task getTask(int id) {
-        if (history.size() < 10) {
-            history.add(tableTasks.get(id));
-        }
-        if (history.size() == 10) {
-            history.remove(0);
-            history.add(tableTasks.get(id));
-        }
-        return tableTasks.get(id); // было return (Task) tableTasks.get(id);
+        inMemoryHistoryManager.add(tableTasks.get(id));
+        return tableTasks.get(id);
     }
 
     //получение по идентификатору задачи типа Epic
     @Override
     public Epic getEpic(int id) {
-        if (history.size() < 10) {
-            history.add(tableEpics.get(id));
-        }
-        if (history.size() == 10) {
-            history.remove(0);
-            history.add(tableEpics.get(id));
-        }
+        inMemoryHistoryManager.add(tableEpics.get(id));
         return tableEpics.get(id);
     }
 
     //получение по идентификатору задачи типа SubTask
     @Override
     public SubTask getSubTask(int id) {
-        if (history.size() < 10) {
-            history.add(tableSubTasks.get(id));
-        }
-        if (history.size() == 10) {
-            history.remove(0);
-            history.add(tableSubTasks.get(id));
-        }
+        inMemoryHistoryManager.add(tableSubTasks.get(id));
         return tableSubTasks.get(id);
     }
 
@@ -229,9 +210,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    //отображение последних просмотренных задач
+    //получить список последних просмотренных задач
     @Override
     public List<Task> getHistory() {
-        return history;
+        return inMemoryHistoryManager.getHistory();
     }
 }
