@@ -1,3 +1,5 @@
+package ru.practicum.kanban.models;
+
 import java.util.List;
 
 public interface HistoryManager {

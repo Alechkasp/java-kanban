@@ -1,3 +1,5 @@
+package ru.practicum.kanban.models;
+
 public class SubTask extends Task {
 
     private final int epicId;

@@ -1,3 +1,5 @@
+import ru.practicum.kanban.models.*;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -56,7 +58,6 @@ public class Main {
         System.out.println("Получить Epic:");
         System.out.println(taskManager.getEpic(3));
         System.out.println(taskManager.getEpic(4));
-
 
         System.out.println("Получить SubTask:");
         System.out.println(taskManager.getSubTask(5));

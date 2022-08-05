@@ -1,3 +1,5 @@
+package ru.practicum.kanban.models;
+
 public enum Status {
     NEW,
     IN_PROGRESS,

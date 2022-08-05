@@ -1,3 +1,5 @@
+package ru.practicum.kanban.models;
+
 public class Managers {
     public TaskManager getDefault() {
         return new InMemoryTaskManager();
