@@ -1,17 +1,18 @@
 package ru.practicum.kanban.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
 
-    private final ArrayList<Integer> subTasksIds;
+    private final List<Integer> subTasksIds;
 
     public Epic(String name, String description, Status status) {
         super(name, description, status);
         subTasksIds = new ArrayList<>();
     }
 
-    public ArrayList<Integer> getSubTasks() {
+    public List<Integer> getSubTasks() {
         return subTasksIds;
     }
 

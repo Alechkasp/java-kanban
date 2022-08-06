@@ -1,16 +1,21 @@
-package ru.practicum.kanban.models;
+package ru.practicum.kanban.manager;
+
+import ru.practicum.kanban.models.Epic;
+import ru.practicum.kanban.models.Status;
+import ru.practicum.kanban.models.SubTask;
+import ru.practicum.kanban.models.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     int id = 0;
-    protected HashMap<Integer, Task> tableTasks = new HashMap<>();
-    protected HashMap<Integer, Epic> tableEpics = new HashMap<>();
-    protected HashMap<Integer, SubTask> tableSubTasks = new HashMap<>();
-    protected InMemoryHistoryManager inMemoryHistoryManager = (InMemoryHistoryManager) Managers.getDefaultHistory();
-
+    protected Map<Integer, Task> tableTasks = new HashMap<>();
+    protected Map<Integer, Epic> tableEpics = new HashMap<>();
+    protected Map<Integer, SubTask> tableSubTasks = new HashMap<>();
+    protected HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     //добавить задачу типа Task
     @Override
@@ -43,8 +48,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получить список все задач типа Task
     @Override
-    public ArrayList<Task> getTasks() {
-        ArrayList<Task> tasks = new ArrayList<>();
+    public List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>();
         for (Integer task : tableTasks.keySet()) {
             tasks.add(tableTasks.get(task));
         }
@@ -53,8 +58,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получить список все задач типа Epic
     @Override
-    public ArrayList<Epic> getEpics() {
-        ArrayList<Epic> epics = new ArrayList<>();
+    public List<Epic> getEpics() {
+        List<Epic> epics = new ArrayList<>();
         for (Integer epic : tableEpics.keySet()) {
             epics.add(tableEpics.get(epic));
         }
@@ -63,8 +68,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получить список все задач типа SubTask
     @Override
-    public ArrayList<SubTask> getSubTasks() {
-        ArrayList<SubTask> subTasks = new ArrayList<>();
+    public List<SubTask> getSubTasks() {
+        List<SubTask> subTasks = new ArrayList<>();
         for (Integer subTask : tableSubTasks.keySet()) {
             subTasks.add(tableSubTasks.get(subTask));
         }
@@ -164,8 +169,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     //получение списка всех подзадач определённого эпика
     @Override
-    public ArrayList<SubTask> getEpicSubTasks(int id) {
-        ArrayList<SubTask> subTaskFromEpic = new ArrayList<>();
+    public List<SubTask> getEpicSubTasks(int id) {
+        List<SubTask> subTaskFromEpic = new ArrayList<>();
         for (Integer subTask : tableSubTasks.keySet()) {
             for (int i = 0; i < getEpic(id).getSubTasks().size(); i++) {
                 if (subTask.equals(getEpic(id).getSubTasks().get(i))) {

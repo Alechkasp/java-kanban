@@ -1,4 +1,9 @@
-import ru.practicum.kanban.models.*;
+import ru.practicum.kanban.manager.Managers;
+import ru.practicum.kanban.manager.TaskManager;
+import ru.practicum.kanban.models.Epic;
+import ru.practicum.kanban.models.Status;
+import ru.practicum.kanban.models.SubTask;
+import ru.practicum.kanban.models.Task;
 
 public class Main {
 

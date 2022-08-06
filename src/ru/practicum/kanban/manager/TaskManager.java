@@ -1,6 +1,9 @@
-package ru.practicum.kanban.models;
+package ru.practicum.kanban.manager;
 
-import java.util.ArrayList;
+import ru.practicum.kanban.models.Epic;
+import ru.practicum.kanban.models.SubTask;
+import ru.practicum.kanban.models.Task;
+
 import java.util.List;
 
 public interface TaskManager {
@@ -15,13 +18,13 @@ public interface TaskManager {
     SubTask addSubTask(SubTask subTask);
 
     //получить список все задач типа Task
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
     //получить список все задач типа Epic
-    ArrayList<Epic> getEpics();
+    List<Epic> getEpics();
 
     //получить список все задач типа SubTask
-    ArrayList<SubTask> getSubTasks();
+    List<SubTask> getSubTasks();
 
     //удалить все задачи типа Task
     void deleteListTasks();
@@ -60,7 +63,7 @@ public interface TaskManager {
     void delSubTask(int id);
 
     //получение списка всех подзадач определённого эпика
-    ArrayList<SubTask> getEpicSubTasks(int id);
+    List<SubTask> getEpicSubTasks(int id);
 
     //получить список последних просмотренных задач
     List<Task> getHistory();

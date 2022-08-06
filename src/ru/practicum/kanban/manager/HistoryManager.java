@@ -1,4 +1,6 @@
-package ru.practicum.kanban.models;
+package ru.practicum.kanban.manager;
+
+import ru.practicum.kanban.models.Task;
 
 import java.util.List;
 
