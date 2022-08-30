@@ -145,6 +145,7 @@ public class InMemoryTaskManager implements TaskManager {
     //удаление по идентификатору задачи типа Task
     @Override
     public void delTask(int id) {
+        inMemoryHistoryManager.remove(id);
         tableTasks.remove(id);
     }
 
@@ -153,18 +154,23 @@ public class InMemoryTaskManager implements TaskManager {
     public void delEpic(int id) {
         for (Integer subTask : getEpic(id).getSubTasks()) {
             if (tableSubTasks.containsKey(subTask)) {
+                inMemoryHistoryManager.remove(tableSubTasks.get(subTask).getId());
                 tableSubTasks.remove(subTask);
             }
         }
+        inMemoryHistoryManager.remove(id);
         tableEpics.remove(id);
     }
 
     //удаление по идентификатору задачи типа SubTask
     @Override
     public void delSubTask(int id) {
-        getEpic(tableSubTasks.get(id).getEpicId()).delSubTaskFromEpic(id);
-        updateEpic(getEpic(tableSubTasks.get(id).getEpicId()));
-        tableSubTasks.remove(id);
+        if (getSubTasks().contains(tableSubTasks.get(id))) {
+            getEpic(tableSubTasks.get(id).getEpicId()).delSubTaskFromEpic(id);
+            updateEpic(getEpic(tableSubTasks.get(id).getEpicId()));
+            inMemoryHistoryManager.remove(id);
+            tableSubTasks.remove(id);
+        }
     }
 
     //получение списка всех подзадач определённого эпика
