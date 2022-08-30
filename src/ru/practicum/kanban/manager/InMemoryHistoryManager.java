@@ -66,7 +66,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     //добавить задачу в конец списка
     public void linkLast(Task task) {
-        Node newNode = null;
+        Node newNode;
         if (historyHead == null) {
             newNode = new Node(task, null, null);
             historyHead = newNode;
@@ -80,8 +80,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     //получить список всех задач
-    public ArrayList<Task> getTasks() {
-        ArrayList<Task> tasks = new ArrayList<>();
+    public List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>();
         for (Node n = historyHead; n != null; n = n.next) {
             tasks.add(n.data);
         }
