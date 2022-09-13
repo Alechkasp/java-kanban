@@ -36,7 +36,7 @@ public class Epic extends Task {
     public String toString() {
         String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),
                 getStatus().toString(), getDescription());
-        result = result + ", subTasksIds=" + subTasksIds;
+        //result = result + ", subTasksIds=" + subTasksIds;
         return result;
     }
 }

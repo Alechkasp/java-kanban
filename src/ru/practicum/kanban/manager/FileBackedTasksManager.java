@@ -1,20 +1,31 @@
 package ru.practicum.kanban.manager;
-//класс для автосохранения в файл
 
 import ru.practicum.kanban.models.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    //Path path = Path.of("\\resources\\file.csv");
+    public FileBackedTasksManager() {
+    }
+
+    public FileBackedTasksManager(Map<Integer, Task> tableTasks, Map<Integer, Epic> tableEpics,
+                                  Map<Integer, SubTask> tableSubTasks) {
+        this.tableTasks = tableTasks;
+        this.tableEpics = tableEpics;
+        this.tableSubTasks = tableSubTasks;
+    }
+
     private String lineSeparator = System.lineSeparator();
 
     public void save() {
-        try (FileWriter fileWriter = new FileWriter("C:\\Users\\Aliya\\git\\java-kanban\\resources\\file.csv", false)) {
+        try (FileWriter fileWriter = new FileWriter("C:\\Users\\Aliya\\git\\java-kanban\\resources\\file.csv",
+                false)) {
             StringBuilder builder = new StringBuilder();
             builder.append("id,type,name,status,description,epic" + lineSeparator);
             for (Task t : getTasks()) {
@@ -31,40 +42,62 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             String asString = builder.toString();
             fileWriter.write(asString);
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при сохранении");
+            throw new ManagerSaveException("Ошибка при сохранении данных в файл");
         }
     }
 
-    private String typeToString(TypeOfTask type) {
-       if (type.equals("TASK")) {
-           return "TASK";
-       }
-       if (type.equals("EPIC")) {
-            return "EPIC";
-       }
-       if (type.equals("SUBTASK")) {
-           return "SUBTASK";
-       }
-       return null;
+    //метод сохранения менеджера истории из CVS
+    static String historyToString(HistoryManager manager) {
+        String history = "";
+        for (Task task: manager.getHistory()) {
+            String taskString = task.toString();
+            String[] split = taskString.split(",");
+            if (history.length() == 0) {
+                history = split[0];
+            } else if (history.length() > 0) {
+                history = split[0] + "," + history;
+            }
+        }
+        return history;
     }
 
-    private String statusToString(Status status) {
-        if (status.equals("NEW")) {
-            return "NEW";
+    //метод восстановления данных менеджера из файла при запуске программы
+    static FileBackedTasksManager loadFromFile(Path path) {
+        Map<Integer, Task> tableTasks = new HashMap<>();
+        Map<Integer, Epic> tableEpics = new HashMap<>();
+        Map<Integer, SubTask> tableSubTasks = new HashMap<>();
+
+        try {
+            String file = Files.readString(path);
+            String[] rows = file.split(System.lineSeparator());
+            for (int i = 1; i < rows.length - 2; i++) {
+                String[] s = rows[i].split(",");
+                if (s[1].equals("TASK")) {
+                    tableTasks.put(fromStringTask(rows[i]).getId(), fromStringTask(rows[i]));
+                }
+                if (s[1].equals("EPIC")) {
+                    tableEpics.put(fromStringEpic(rows[i]).getId(), fromStringEpic(rows[i]));
+                }
+                if (s[1].equals("SUBTASK")) {
+                    tableSubTasks.put(fromStringSubTask(rows[i]).getId(), fromStringSubTask(rows[i]));
+                }
+            }
+            System.out.println(tableTasks);
+            System.out.println(tableEpics);
+            System.out.println(tableSubTasks);
+
+            System.out.println(historyFromString(rows[rows.length - 1]));
+
+            return new FileBackedTasksManager(tableTasks, tableEpics, tableSubTasks);
+
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка при восстановлении данных из файла");
         }
-        if (status.equals("IN_PROGRESS")) {
-            return "IN_PROGRESS";
-        }
-        if (status.equals("DONE")) {
-            return "DONE";
-        }
-        return null;
     }
 
-    //метод создания задачи из строки
-    public Task fromString(String value) {
+    //метод создания задачи из строки, если задача типа Task
+    static Task fromStringTask(String value) {
         String[] taskString = value.split(",");
-        //если задача типа Task
         if (taskString[1].equals("TASK")) {
             if (taskString[3].equals("NEW")) {
                 Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], Status.NEW);
@@ -82,7 +115,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 return task;
             }
         }
-        //если задача типа Epic
+        return null;
+    }
+
+    //метод создания задачи из строки, если задача типа Epic
+    static Epic fromStringEpic(String value) {
+        String[] taskString = value.split(",");
         if (taskString[1].equals("EPIC")) {
             if (taskString[3].equals("NEW")) {
                 Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], Status.NEW);
@@ -100,7 +138,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 return epic;
             }
         }
-        //если задача типа SubTask
+        return null;
+    }
+
+    //метод создания задачи из строки, если задача типа SubTask
+    static SubTask fromStringSubTask(String value) {
+        String[] taskString = value.split(",");
         if (taskString[1].equals("SUBTASK")) {
             if (taskString[3].equals("NEW")) {
                 SubTask subTask = new SubTask(TypeOfTask.SUBTASK, taskString[2], taskString[4], Status.NEW,
@@ -124,21 +167,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return null;
     }
 
-    //метод сохранения менеджера истории из CVS
-    static String historyToString(HistoryManager manager) {
-        String history = "";
-        for (Task task: manager.getHistory()) {
-            String taskString = task.toString();
-            String[] split = taskString.split(",");
-            if (history.length() == 0) {
-                history = split[0];
-            } else if (history.length() > 0) {
-                history = split[0] + "," + history;
-            }
-        }
-        return history;
-    }
-
     //метод восстановления менеджера истории из CVS
     static List<Integer> historyFromString(String value) {
         List<Integer> list = new ArrayList<>();
@@ -147,11 +175,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return list;
     }
-
-    //метод восстановления данных менеджера из файла при запуске программы
-    //static FileBackedTasksManager loadFromFile(File file) {
-
-    //}
 
     @Override
     public Task addTask(Task task) {
@@ -349,5 +372,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(fileBackedTasksManager.getHistory());
         System.out.println("Размер списка: " + fileBackedTasksManager.getHistory().size());
 
+        Path filePath = Path.of("C:\\Users\\Aliya\\git\\java-kanban\\resources\\file.csv");
+        loadFromFile(filePath);
     }
 }
