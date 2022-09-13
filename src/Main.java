@@ -1,12 +1,9 @@
 import ru.practicum.kanban.manager.Managers;
 import ru.practicum.kanban.manager.TaskManager;
-import ru.practicum.kanban.models.Epic;
-import ru.practicum.kanban.models.Status;
-import ru.practicum.kanban.models.SubTask;
-import ru.practicum.kanban.models.Task;
+import ru.practicum.kanban.models.*;
 
 public class Main {
-
+/*
     public static void main(String[] args) {
 
         Managers managers = new Managers();
@@ -14,24 +11,24 @@ public class Main {
 
 
         //СОЗДАНИЕ
-        Task taskRemoval = new Task("Задача 1", "Описание первой задачи", Status.NEW);
+        Task taskRemoval = new Task(TypeOfTask.TASK, "Задача 1", "Описание первой задачи", Status.NEW);
         taskManager.addTask(taskRemoval);
-        Task taskShop = new Task("Задача 2", "Описание второй задачи", Status.NEW);
+        Task taskShop = new Task(TypeOfTask.TASK, "Задача 2", "Описание второй задачи", Status.NEW);
         taskManager.addTask(taskShop);
 
-        Epic epicSea = new Epic("Эпик 1", "Описание первого эпика", Status.NEW);
+        Epic epicSea = new Epic(TypeOfTask.EPIC, "Эпик 1", "Описание первого эпика", Status.NEW);
         taskManager.addEpic(epicSea);
-        Epic epicCar = new Epic("Эпик 2", "Описание второго эпика", Status.NEW);
+        Epic epicCar = new Epic(TypeOfTask.EPIC, "Эпик 2", "Описание второго эпика", Status.NEW);
         taskManager.addEpic(epicCar);
 
-        SubTask subTaskShop = new SubTask("Сабтаск 1", "Описание первого сабтаска", Status.DONE,
-                3);
+        SubTask subTaskShop = new SubTask(TypeOfTask.SUBTASK, "Сабтаск 1", "Описание первого сабтаска",
+                Status.DONE, 3);
         taskManager.addSubTask(subTaskShop);
-        SubTask subTaskBuy = new SubTask("Сабтаск 2", "Описание второго сабтаска", Status.IN_PROGRESS,
-                3);
+        SubTask subTaskBuy = new SubTask(TypeOfTask.SUBTASK, "Сабтаск 2", "Описание второго сабтаска",
+                Status.IN_PROGRESS, 3);
         taskManager.addSubTask(subTaskBuy);
-        SubTask subTaskCar = new SubTask("Сабтаск 3", "Описание третьего сабтаска", Status.NEW,
-                3);
+        SubTask subTaskCar = new SubTask(TypeOfTask.SUBTASK, "Сабтаск 3", "Описание третьего сабтаска",
+                Status.NEW, 3);
         taskManager.addSubTask(subTaskCar);
 
 
@@ -81,5 +78,5 @@ public class Main {
         System.out.println("Последние просмотренные задачи: ");
         System.out.println(taskManager.getHistory());
         System.out.println("Размер списка: " + taskManager.getHistory().size());
-    }
+    }*/
 }

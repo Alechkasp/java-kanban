@@ -3,16 +3,30 @@ package ru.practicum.kanban.models;
 import java.util.Objects;
 
 public class Task {
+    private final TypeOfTask type;
     private final String name;
     private int id;
     private final String description;
     private Status status;
 
-    public Task(String name, String description, Status status) {
+    public Task(TypeOfTask type, String name, String description, Status status) {
+        this.type = type;
         this.name = name;
         this.id = 0;
         this.description = description;
         this.status = status;
+    }
+
+    public TypeOfTask getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setId(int id) {
@@ -50,17 +64,7 @@ public class Task {
 
     @Override
     public String toString() {
-        String result = "Task{" +
-                "name='" + name + '\'' +
-                ", id=" + id;
-
-        if (description != null) {
-            result = result + ", description.length='" + description.length();
-        } else {
-            result = result + ", description=null";
-        }
-
-        return result + ", status='" + status + '\'' +
-                "}";
+        String result = String.join(",", Integer.toString(id), type.toString(), name, status.toString(), description);
+        return result;
     }
 }

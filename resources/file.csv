@@ -1,0 +1,8 @@
+id,type,name,status,description,epic
+1,TASK,Новая задача 1,NEW,Описание первой задачи
+3,EPIC,Новый эпик 1,IN_PROGRESS,Описание первого эпика, subTasksIds=[5, 6, 7]
+5,SUBTASK,Новый сабтаск 1,DONE,Описание первого сабтаска, epicId=3
+6,SUBTASK,Новый сабтаск 2,IN_PROGRESS,Описание второго сабтаска, epicId=3
+7,SUBTASK,Новый сабтаск 3,NEW,Описание третьего сабтаска, epicId=3
+
+1,6,7,5,3
