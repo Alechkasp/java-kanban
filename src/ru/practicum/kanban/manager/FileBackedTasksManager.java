@@ -14,18 +14,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager() {
     }
 
-    public FileBackedTasksManager(Map<Integer, Task> tableTasks, Map<Integer, Epic> tableEpics,
-                                  Map<Integer, SubTask> tableSubTasks) {
+    public FileBackedTasksManager(int id, Map<Integer, Task> tableTasks, Map<Integer, Epic> tableEpics,
+                                  Map<Integer, SubTask> tableSubTasks, InMemoryHistoryManager inMemoryHistoryManager) {
+        this.id = id;
         this.tableTasks = tableTasks;
         this.tableEpics = tableEpics;
         this.tableSubTasks = tableSubTasks;
+        this.inMemoryHistoryManager = inMemoryHistoryManager;
     }
 
     private String lineSeparator = System.lineSeparator();
 
     public void save() {
-        try (FileWriter fileWriter = new FileWriter("C:\\Users\\Aliya\\git\\java-kanban\\resources\\file.csv",
-                false)) {
+        try (FileWriter fileWriter = new FileWriter("resources/file.csv", false)) {
             StringBuilder builder = new StringBuilder();
             builder.append("id,type,name,status,description,epic" + lineSeparator);
             for (Task t : getTasks()) {
@@ -63,9 +64,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //метод восстановления данных менеджера из файла при запуске программы
     static FileBackedTasksManager loadFromFile(Path path) {
+        int id = 0;
         Map<Integer, Task> tableTasks = new HashMap<>();
         Map<Integer, Epic> tableEpics = new HashMap<>();
         Map<Integer, SubTask> tableSubTasks = new HashMap<>();
+        InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
         try {
             String file = Files.readString(path);
@@ -82,13 +85,48 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     tableSubTasks.put(fromStringSubTask(rows[i]).getId(), fromStringSubTask(rows[i]));
                 }
             }
+
+            for (Task t : tableTasks.values()) {
+                if (id < t.getId()) {
+                    id = t.getId();
+                }
+            }
+            for (Task t : tableEpics.values()) {
+                if (id < t.getId()) {
+                    id = t.getId();
+                }
+            }
+            for (Task t : tableSubTasks.values()) {
+                if (id < t.getId()) {
+                    id = t.getId();
+                }
+            }
+
+            for (Integer i : historyFromString(rows[rows.length - 1])) {
+                for (Task t : tableTasks.values()) {
+                    if (t.getId() == i) {
+                        inMemoryHistoryManager.add(t);
+                    }
+                }
+                for (Epic e : tableEpics.values()) {
+                    if (e.getId() == i) {
+                        inMemoryHistoryManager.add(e);
+                    }
+                }
+                for (SubTask s : tableSubTasks.values()) {
+                    if (s.getId() == i) {
+                        inMemoryHistoryManager.add(s);
+                    }
+                }
+            }
+
             System.out.println(tableTasks);
             System.out.println(tableEpics);
             System.out.println(tableSubTasks);
 
             System.out.println(historyFromString(rows[rows.length - 1]));
 
-            return new FileBackedTasksManager(tableTasks, tableEpics, tableSubTasks);
+            return new FileBackedTasksManager(id, tableTasks, tableEpics, tableSubTasks, inMemoryHistoryManager);
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при восстановлении данных из файла");
@@ -99,21 +137,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static Task fromStringTask(String value) {
         String[] taskString = value.split(",");
         if (taskString[1].equals("TASK")) {
-            if (taskString[3].equals("NEW")) {
-                Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], Status.NEW);
-                task.setId(Integer.parseInt(taskString[0]));
-                return task;
-            }
-            if (taskString[3].equals("IN_PROGRESS")) {
-                Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], Status.IN_PROGRESS);
-                task.setId(Integer.parseInt(taskString[0]));
-                return task;
-            }
-            if (taskString[3].equals("DONE")) {
-                Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], Status.DONE);
-                task.setId(Integer.parseInt(taskString[0]));
-                return task;
-            }
+            Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], statusDetermination(value));
+            task.setId(Integer.parseInt(taskString[0]));
+            return task;
         }
         return null;
     }
@@ -122,21 +148,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static Epic fromStringEpic(String value) {
         String[] taskString = value.split(",");
         if (taskString[1].equals("EPIC")) {
-            if (taskString[3].equals("NEW")) {
-                Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], Status.NEW);
-                epic.setId(Integer.parseInt(taskString[0]));
-                return epic;
-            }
-            if (taskString[3].equals("IN_PROGRESS")) {
-                Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], Status.IN_PROGRESS);
-                epic.setId(Integer.parseInt(taskString[0]));
-                return epic;
-            }
-            if (taskString[3].equals("DONE")) {
-                Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], Status.DONE);
-                epic.setId(Integer.parseInt(taskString[0]));
-                return epic;
-            }
+            Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], statusDetermination(value));
+            epic.setId(Integer.parseInt(taskString[0]));
+            return epic;
         }
         return null;
     }
@@ -145,26 +159,28 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static SubTask fromStringSubTask(String value) {
         String[] taskString = value.split(",");
         if (taskString[1].equals("SUBTASK")) {
-            if (taskString[3].equals("NEW")) {
-                SubTask subTask = new SubTask(TypeOfTask.SUBTASK, taskString[2], taskString[4], Status.NEW,
+            SubTask subTask = new SubTask(TypeOfTask.SUBTASK, taskString[2], taskString[4], statusDetermination(value),
                         Integer.parseInt(taskString[5]));
-                subTask.setId(Integer.parseInt(taskString[0]));
-                return subTask;
-            }
-            if (taskString[3].equals("IN_PROGRESS")) {
-                SubTask subTask = new SubTask(TypeOfTask.EPIC, taskString[2], taskString[4], Status.IN_PROGRESS,
-                        Integer.parseInt(taskString[5]));
-                subTask.setId(Integer.parseInt(taskString[0]));
-                return subTask;
-            }
-            if (taskString[3].equals("DONE")) {
-                SubTask subTask = new SubTask(TypeOfTask.EPIC, taskString[2], taskString[4], Status.DONE,
-                        Integer.parseInt(taskString[5]));
-                subTask.setId(Integer.parseInt(taskString[0]));
-                return subTask;
-            }
+            subTask.setId(Integer.parseInt(taskString[0]));
+            return subTask;
         }
         return null;
+    }
+
+    //метод определения статуса
+    static Status statusDetermination(String value) {
+        String[] taskString = value.split(",");
+        switch (taskString[3]) {
+            case "NEW":
+                return Status.NEW;
+            case "IN_PROGRESS":
+                return Status.IN_PROGRESS;
+            case "DONE":
+                return Status.DONE;
+            default:
+                System.out.println("Такого статуса нет");
+                return null;
+        }
     }
 
     //метод восстановления менеджера истории из CVS
@@ -195,39 +211,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         SubTask s = super.addSubTask(subTask);
         save();
         return s;
-    }
-
-    @Override
-    public List<Task> getTasks() {
-        List<Task> l = super.getTasks();
-        return l;
-    }
-
-    @Override
-    public List<Epic> getEpics() {
-        List<Epic> e = super.getEpics();
-        return e;
-    }
-
-    @Override
-    public List<SubTask> getSubTasks() {
-        List<SubTask> s = super.getSubTasks();
-        return s;
-    }
-
-    @Override
-    public void deleteListTasks() {
-        super.deleteListTasks();
-    }
-
-    @Override
-    public void deleteListEpics() {
-        super.deleteListEpics();
-    }
-
-    @Override
-    public void deleteListSubTask() {
-        super.deleteListSubTask();
     }
 
     @Override
@@ -285,31 +268,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void delSubTask(int id) {
         super.delSubTask(id);
         save();
-    }
-
-    @Override
-    public List<SubTask> getEpicSubTasks(int id) {
-        return super.getEpicSubTasks(id);
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return super.getHistory();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 
     public static void main(String[] args) {
@@ -372,7 +330,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(fileBackedTasksManager.getHistory());
         System.out.println("Размер списка: " + fileBackedTasksManager.getHistory().size());
 
-        Path filePath = Path.of("C:\\Users\\Aliya\\git\\java-kanban\\resources\\file.csv");
+        Path filePath = Path.of("resources/file.csv");
         loadFromFile(filePath);
     }
 }
