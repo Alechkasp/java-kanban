@@ -1,8 +1,5 @@
 id,type,name,status,description,epic
-1,TASK,Новая задача 1,NEW,Описание первой задачи
-3,EPIC,Новый эпик 1,IN_PROGRESS,Описание первого эпика
-5,SUBTASK,Новый сабтаск 1,DONE,Описание первого сабтаска,3
-6,SUBTASK,Новый сабтаск 2,IN_PROGRESS,Описание второго сабтаска,3
-7,SUBTASK,Новый сабтаск 3,NEW,Описание третьего сабтаска,3
+1,EPIC,Test addNewEpic,NEW,Test addNewEpic description
+2,SUBTASK,Test addNewSubTask,NEW,Test addNewSubTask description,1
 
-1,6,7,5,3
+2,1
