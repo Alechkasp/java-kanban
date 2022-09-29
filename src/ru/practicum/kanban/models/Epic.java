@@ -32,6 +32,11 @@ public class Epic extends Task {
         subTasksIds.remove(id);
     }
 
+    //если удалили все SubTask
+    public void clearSubTasksIds() {
+        subTasksIds.clear();
+    }
+
     @Override
     public String toString() {
         String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),

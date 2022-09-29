@@ -41,7 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
         id++;
         subTask.setId(id);
         tableSubTasks.put(id, subTask);
-        getEpic(subTask.getEpicId()).addSubTaskToEpic(id);
+        getEpicForSubTask(subTask.getEpicId()).addSubTaskToEpic(id);
         updateEpicStatus(subTask.getEpicId());
         return subTask;
     }
@@ -92,6 +92,10 @@ public class InMemoryTaskManager implements TaskManager {
     //удалить все задачи типа SubTask
     @Override
     public void deleteListSubTask() {
+        for (Epic e : tableEpics.values()) {
+            e.clearSubTasksIds();
+            updateEpicStatus(e.getId());
+        }
         tableSubTasks.clear();
     }
 
@@ -106,6 +110,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpic(int id) {
         inMemoryHistoryManager.add(tableEpics.get(id));
+        return tableEpics.get(id);
+    }
+
+    //получение по идентификатору задачи типа Epic при создании subTask
+    public Epic getEpicForSubTask(int id) {
         return tableEpics.get(id);
     }
 
@@ -192,7 +201,7 @@ public class InMemoryTaskManager implements TaskManager {
         int countDone = 0;
 
         for (Integer subTask : tableSubTasks.keySet()) {
-            if (getEpic(epicId).getSubTasks().contains(subTask)) {
+            if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
                 if (tableSubTasks.get(subTask).getStatus().equals(Status.NEW)) {
                     countNew++;
                 }
@@ -200,7 +209,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         for (Integer subTask : tableSubTasks.keySet()) {
-            if (getEpic(epicId).getSubTasks().contains(subTask)) {
+            if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
                 if (tableSubTasks.get(subTask).getStatus().equals(Status.DONE)) {
                     countDone++;
                 }
@@ -208,18 +217,18 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         //если у эпика нет подзадач
-        boolean withoutSubTask = getEpic(epicId).getSubTasks().isEmpty();
+        boolean withoutSubTask = getEpicForSubTask(epicId).getSubTasks().isEmpty();
         //если подзадачи у эпика есть и все имеют статус "NEW"
-        boolean withSubTaskStatusNew = countNew == getEpic(epicId).getSubTasks().size();
+        boolean withSubTaskStatusNew = countNew == getEpicForSubTask(epicId).getSubTasks().size();
         //если все подзадачи у эпика имеют статус "DONE"
-        boolean withSubTaskStatusDone = countDone == getEpic(epicId).getSubTasks().size();
+        boolean withSubTaskStatusDone = countDone == getEpicForSubTask(epicId).getSubTasks().size();
 
         if (withoutSubTask || withSubTaskStatusNew) {
-            getEpic(epicId).setStatus(Status.NEW);
+            getEpicForSubTask(epicId).setStatus(Status.NEW);
         } else if (withSubTaskStatusDone) {
-            getEpic(epicId).setStatus(Status.DONE);
+            getEpicForSubTask(epicId).setStatus(Status.DONE);
         } else {
-            getEpic(epicId).setStatus(Status.IN_PROGRESS);
+            getEpicForSubTask(epicId).setStatus(Status.IN_PROGRESS);
         }
     }
 

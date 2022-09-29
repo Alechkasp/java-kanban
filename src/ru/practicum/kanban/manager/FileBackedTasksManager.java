@@ -24,9 +24,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private String lineSeparator = System.lineSeparator();
+    static final Path path = Path.of("resources/file.csv");
 
-    public void save() {
-        try (FileWriter fileWriter = new FileWriter("resources/file.csv", false)) {
+    public void save(Path path) {
+        try (FileWriter fileWriter = new FileWriter(path.toFile(), false)) {
             StringBuilder builder = new StringBuilder();
             builder.append("id,type,name,status,description,epic" + lineSeparator);
             for (Task t : getTasks()) {
@@ -195,79 +196,79 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public Task addTask(Task task) {
         Task t = super.addTask(task);
-        save();
+        save(path);
         return t;
     }
 
     @Override
     public Epic addEpic(Epic epic) {
         Epic e = super.addEpic(epic);
-        save();
+        save(path);
         return e;
     }
 
     @Override
     public SubTask addSubTask(SubTask subTask) {
         SubTask s = super.addSubTask(subTask);
-        save();
+        save(path);
         return s;
     }
 
     @Override
     public Task getTask(int id) {
         Task t = super.getTask(id);
-        save();
+        save(path);
         return t;
     }
 
     @Override
     public Epic getEpic(int id) {
         Epic e = super.getEpic(id);
-        save();
+        save(path);
         return e;
     }
 
     @Override
     public SubTask getSubTask(int id) {
         SubTask s = super.getSubTask(id);
-        save();
+        save(path);
         return s;
     }
 
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
-        save();
+        save(path);
     }
 
     @Override
     public void updateEpic(Epic epic) {
         super.updateEpic(epic);
-        save();
+        save(path);
     }
 
     @Override
     public void updateSubTask(SubTask subTask) {
         super.updateSubTask(subTask);
-        save();
+        save(path);
     }
 
     @Override
     public void delTask(int id) {
         super.delTask(id);
-        save();
+        save(path);
     }
 
     @Override
     public void delEpic(int id) {
         super.delEpic(id);
-        save();
+        save(path);
     }
 
     @Override
     public void delSubTask(int id) {
         super.delSubTask(id);
-        save();
+        save(path);
     }
 
     public static void main(String[] args) {

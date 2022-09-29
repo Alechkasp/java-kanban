@@ -156,14 +156,6 @@ public class TaskManagerTest<T extends TaskManager> {
             assertNotNull(taskManager.getTasks(), "Список тасков пустой");
             assertEquals(1, taskId, "Неверный id задачи");
             assertEquals(taskFirst, savedTask, "Задачи не совпадают.");
-
-/*            HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-            inMemoryHistoryManager.add(taskFirst);
-
-            final List<Task> history = inMemoryHistoryManager.getHistory();
-
-            assertNotNull(history, "История пустая.");
-            assertEquals(1, history.size(), "История не пустая.");*/
         }
 
         @Test
@@ -193,14 +185,6 @@ public class TaskManagerTest<T extends TaskManager> {
                 subTaskIds.add(s.getId());
             }
             assertEquals(epicFirst.getSubTasks(), subTaskIds, "Неправильный список id подзадач эпика");
-
-/*            HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-            inMemoryHistoryManager.add(epicFirst);
-
-            final List<Task> history = inMemoryHistoryManager.getHistory();
-
-            assertNotNull(history, "История пустая.");
-            assertEquals(1, history.size(), "История не пустая.");*/
         }
 
         @Test
@@ -222,14 +206,6 @@ public class TaskManagerTest<T extends TaskManager> {
             assertEquals(2, subTaskId, "Неверный id задачи");
             assertEquals(subTaskFirst, savedSubTask, "Задачи не совпадают.");
             assertEquals(epicFirst.getStatus(), Status.IN_PROGRESS, "Неверно расчитан статус Эпика");
-
-/*            HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-            inMemoryHistoryManager.add(subTaskFirst);
-
-            final List<Task> history = inMemoryHistoryManager.getHistory();
-
-            assertNotNull(history, "История пустая.");
-            assertEquals(1, history.size(), "История не пустая.");*/
         }
 
         @Test
@@ -358,5 +334,218 @@ public class TaskManagerTest<T extends TaskManager> {
         assertEquals(1, subTasks.size(), "Неверное количество задач.");
         assertEquals(subTaskSecond, subTasks.get(0), "Задачи не совпадают.");
         assertEquals(epicFirst.getStatus(), Status.DONE, "Неверно рассчитан статус эпика.");
+    }
+
+    @Test
+    void shouldGetEpicSubTask() {
+        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.NEW);
+        final int epicFirstId = taskManager.addEpic(epicFirst).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+        taskManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
+                "Test addNewSubTask2 description", Status.DONE, epicFirstId);
+        taskManager.addSubTask(subTaskSecond);
+
+        final List<SubTask> savedSubTasks = taskManager.getEpicSubTasks(epicFirstId);
+
+        final List<SubTask> subTasks = new ArrayList<>();
+        for (SubTask s : taskManager.getSubTasks()) {
+            subTasks.add(s);
+        }
+
+        assertNotNull(subTasks, "Задачи нe возвращаются.");
+        assertEquals(1, epicFirstId, "Неверный id эпика");
+        assertEquals(savedSubTasks, subTasks, "Неправильный список подзадач эпика");
+        assertEquals(epicFirst.getStatus(), Status.IN_PROGRESS, "Неверно рассчитан статус эпика.");
+    }
+
+    @Test
+    void shouldDelListTasks() {
+        Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
+                Status.NEW);
+        taskManager.addTask(taskFirst);
+        Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
+                Status.IN_PROGRESS);
+        taskManager.addTask(taskSecond);
+
+        assertNotNull(taskManager.getTasks(), "Задачи нe возвращаются.");
+
+        taskManager.deleteListTasks();
+
+        assertEquals(0, taskManager.getTasks().size(), "Задачи не удалены.");
+    }
+
+    @Test
+    void shouldDelListEpics() {
+        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
+                Status.NEW);
+        taskManager.addEpic(epicFirst);
+        Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
+                Status.NEW);
+        taskManager.addEpic(epicSecond);
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicFirst.getId());
+        taskManager.addSubTask(subTaskFirst);
+
+        assertNotNull(taskManager.getEpics(), "Задачи нe возвращаются.");
+        assertNotNull(taskManager.getSubTasks(), "Задачи нe возвращаются.");
+        assertEquals(1, epicFirst.getId(), "Неверный id эпика");
+        assertEquals(epicFirst.getStatus(), Status.IN_PROGRESS, "Неверно рассчитан статус эпика.");
+
+        taskManager.deleteListEpics();
+
+        assertEquals(0, taskManager.getEpics().size(), "Задачи не удалены.");
+        assertEquals(0, taskManager.getSubTasks().size(), "Задачи не удалены.");
+    }
+
+    @Test
+    void shouldDelListSubTasks() {
+        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.NEW);
+        final int epicFirstId = taskManager.addEpic(epicFirst).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+        taskManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
+                "Test addNewSubTask2 description", Status.DONE, epicFirstId);
+        taskManager.addSubTask(subTaskSecond);
+
+        assertNotNull(taskManager.getEpics(), "Задачи нe возвращаются.");
+        assertNotNull(taskManager.getSubTasks(), "Задачи нe возвращаются.");
+        assertEquals(1, epicFirstId, "Неверный id эпика");
+        assertEquals(epicFirst.getStatus(), Status.IN_PROGRESS, "Неверно рассчитан статус эпика.");
+
+        taskManager.deleteListSubTask();
+
+        assertEquals(0, taskManager.getSubTasks().size(), "Задачи не удалены.");
+        assertEquals(0, taskManager.getEpicSubTasks(epicFirstId).size(), "Сабтаски не удалены из эпика.");
+        assertEquals(epicFirst.getStatus(), Status.NEW, "Неверно рассчитан статус эпика.");
+    }
+
+    @Test
+    void shouldNoAddToHistory() {
+        Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
+                Status.NEW);
+        taskManager.addTask(taskFirst);
+        Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
+                Status.IN_PROGRESS);
+        taskManager.addTask(taskSecond);
+
+        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
+                Status.NEW);
+        final int epicFirstId = taskManager.addEpic(epicFirst).getId();
+        Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
+                Status.NEW);
+        final int epicSecondId = taskManager.addEpic(epicSecond).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+        taskManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
+                "Test addNewSubTask2 description", Status.DONE, epicSecondId);
+        taskManager.addSubTask(subTaskSecond);
+
+        final List<Task> savedHistory = taskManager.getHistory();
+
+        assertNotNull(taskManager.getHistory(), "История нe возвращается.");
+        assertEquals(0, savedHistory.size(), "Неверное количество задач в истории.");
+    }
+
+    @Test
+    void shouldAddToHistory() {
+        Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
+                Status.NEW);
+        final int taskFirstId = taskManager.addTask(taskFirst).getId();
+        Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
+                Status.IN_PROGRESS);
+        final int taskSecondId = taskManager.addTask(taskSecond).getId();
+
+        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
+                Status.NEW);
+        final int epicFirstId = taskManager.addEpic(epicFirst).getId();
+        Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
+                Status.NEW);
+        final int epicSecondId = taskManager.addEpic(epicSecond).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+        final int subTaskFirstId = taskManager.addSubTask(subTaskFirst).getId();
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
+                "Test addNewSubTask2 description", Status.DONE, epicSecondId);
+        final int subTaskSecondId = taskManager.addSubTask(subTaskSecond).getId();
+
+        taskManager.getTask(taskFirstId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getEpic(epicFirstId);
+        taskManager.getEpic(epicSecondId);
+        taskManager.getSubTask(subTaskFirstId);
+        taskManager.getSubTask(subTaskSecondId);
+
+        assertNotNull(taskManager.getTasks(), "Задачи нe возвращаются.");
+        assertNotNull(taskManager.getEpics(), "Эпики нe возвращаются.");
+        assertNotNull(taskManager.getSubTasks(), "Сабтаски нe возвращаются.");
+        assertEquals(3, epicFirstId, "Неверный id эпика");
+        assertEquals(5, subTaskFirstId, "Неверный id сабтаска");
+        assertEquals(epicFirst.getStatus(), Status.IN_PROGRESS, "Неверно рассчитан статус эпика.");
+
+        final List<Task> savedHistory = taskManager.getHistory();
+
+        assertNotNull(taskManager.getHistory(), "История нe возвращается.");
+        assertEquals(6, savedHistory.size(), "Неверное количество задач в истории.");
+    }
+
+    @Test
+    void shouldRemoveFromHistory() {
+        Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
+                Status.NEW);
+        final int taskFirstId = taskManager.addTask(taskFirst).getId();
+        Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
+                Status.IN_PROGRESS);
+        final int taskSecondId = taskManager.addTask(taskSecond).getId();
+
+        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
+                Status.NEW);
+        final int epicFirstId = taskManager.addEpic(epicFirst).getId();
+        Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
+                Status.NEW);
+        final int epicSecondId = taskManager.addEpic(epicSecond).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+        final int subTaskFirstId = taskManager.addSubTask(subTaskFirst).getId();
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
+                "Test addNewSubTask2 description", Status.DONE, epicSecondId);
+        final int subTaskSecondId = taskManager.addSubTask(subTaskSecond).getId();
+
+        taskManager.getTask(taskFirstId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getTask(taskSecondId);
+        taskManager.getEpic(epicFirstId);
+        taskManager.getEpic(epicSecondId);
+        taskManager.getSubTask(subTaskFirstId);
+        taskManager.getSubTask(subTaskSecondId);
+
+        assertNotNull(taskManager.getTasks(), "Задачи нe возвращаются.");
+        assertNotNull(taskManager.getEpics(), "Эпики нe возвращаются.");
+        assertNotNull(taskManager.getSubTasks(), "Сабтаски нe возвращаются.");
+        assertEquals(3, epicFirstId, "Неверный id эпика");
+        assertEquals(5, subTaskFirstId, "Неверный id сабтаска");
+        assertEquals(epicFirst.getStatus(), Status.IN_PROGRESS, "Неверно рассчитан статус эпика.");
+
+        final List<Task> savedHistory = taskManager.getHistory();
+
+        savedHistory.remove(0);
+
+        assertNotNull(taskManager.getHistory(), "История нe возвращается.");
+        assertEquals(5, savedHistory.size(), "Неверное количество задач в истории.");
     }
 }

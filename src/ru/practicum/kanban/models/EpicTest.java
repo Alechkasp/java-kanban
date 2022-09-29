@@ -109,8 +109,6 @@ class EpicTest {
                 Status.NEW);
         final int epicId = taskManager.addEpic(epic).getId();
 
-        //System.out.println("epic status before add subtask " + epic.getStatus());
-
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
                 "Test addNewSubTask description", Status.IN_PROGRESS, epicId);
         taskManager.addSubTask(subTaskFirst);
@@ -122,8 +120,6 @@ class EpicTest {
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
-
-        //System.out.println("epic status before add subtask " + savedEpic.getStatus());
 
         assertEquals(epic.getStatus(), savedEpic.getStatus(), "Статусы не совпадают.");
     }
