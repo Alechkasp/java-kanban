@@ -1,6 +1,5 @@
 package ru.practicum.kanban.models;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -12,6 +11,8 @@ public class Task {
     private Status status;
     private Instant startTime;
     private long duration;
+    long SECONDS_IN_MINUTE = 60;
+    Instant endTime;
 
     public Task(TypeOfTask type, String name, String description, Status status, Instant startTime, long duration) {
         this.type = type;
@@ -55,26 +56,23 @@ public class Task {
         return duration;
     }
 
-/*    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-
-    public long getStartTime() {
-        return startTime.toEpochMilli();
-    }
-
-    public long getEndTime() {
-        long SECONDS_IN_MINUTE = 60L;
-        return startTime.plusSeconds(duration * SECONDS_IN_MINUTE).toEpochMilli();
-    }*/
-
     public Instant getStartTime() {
         return startTime;
     }
 
+    public void setStartTime(Instant startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
     public Instant getEndTime() {
-        long SECONDS_IN_MINUTE = 60L;
         return startTime.plusSeconds(duration * SECONDS_IN_MINUTE);
+    }
+    public void setEndTime(Instant endTime) {
+        this.endTime = endTime;
     }
 
 
@@ -97,18 +95,9 @@ public class Task {
 
     @Override
     public String toString() {
-/*       String result = String.join(",", Integer.toString(id), type.toString(), name, status.toString(),
-                description, Long.toString(startTime.toEpochMilli()), Long.toString(getEndTime()));*/
-
-/*        String result = String.join(",", Integer.toString(id), type.toString(), name, status.toString(),
-                description, startTime.toEpochMilli(), duration);*/
-        return id + "," +
-                type + "," +
-                name + "," +
-                status + "," +
-                description + "," +
-                startTime.toEpochMilli() + "," +
-                duration;
-        //return result;
+        String result = String.join(",", Integer.toString(id), type.toString(), name, status.toString(),
+                description, Long.toString(getDuration()), Long.toString(startTime.toEpochMilli()),
+                Long.toString(getEndTime().toEpochMilli()));
+        return result;
     }
 }

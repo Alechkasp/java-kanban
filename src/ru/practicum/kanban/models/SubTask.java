@@ -1,6 +1,5 @@
 package ru.practicum.kanban.models;
 
-import java.time.Duration;
 import java.time.Instant;
 
 public class SubTask extends Task {
@@ -19,16 +18,10 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-/*        String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),
+       String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),
                 getStatus().toString(), getDescription(), Integer.toString(getEpicId()),
-                Long.toString(getStartTime()), Long.toString(getDuration()));
-        return result;*/
-        return getId() + "," +
-                getType() + "," +
-                getName() + "," +
-                getStatus() + "," +
-                getDescription() + "," +
-                getStartTime().toEpochMilli() + "," +
-                getDuration();
+               Long.toString(getDuration()), Long.toString(getStartTime().toEpochMilli()),
+               Long.toString(getEndTime().toEpochMilli()));
+        return result;
     }
 }

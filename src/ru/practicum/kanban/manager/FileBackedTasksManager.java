@@ -31,7 +31,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void save(Path path) {
         try (FileWriter fileWriter = new FileWriter(path.toFile(), StandardCharsets.UTF_8,false)) {
             StringBuilder builder = new StringBuilder();
-            builder.append("id,type,name,status,description,epic,startTime,endTime,duration" + lineSeparator);
+            builder.append("id,type,name,status,description,epic,duration,startTime,endTime" + lineSeparator);
             for (Task t : getTasks()) {
                 builder.append(t.toString() + lineSeparator);
             }
@@ -147,9 +147,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static Task fromStringTask(String value) {
         String[] taskString = value.split(",");
         if (taskString[1].equals("TASK")) {
-/*          Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], statusDetermination(value),
-                    Instant.ofEpochMilli(Long.parseLong(taskString[5])), Long.parseLong(taskString[6]));
-            task.setId(Integer.parseInt(taskString[0]));*/
             Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], statusDetermination(value),
                     Instant.ofEpochMilli(Long.parseLong(taskString[5])), Long.parseLong(taskString[6]));
             task.setId(Integer.parseInt(taskString[0]));
@@ -175,7 +172,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] taskString = value.split(",");
         if (taskString[1].equals("SUBTASK")) {
             SubTask subTask = new SubTask(TypeOfTask.SUBTASK, taskString[2], taskString[4], statusDetermination(value),
-                        Integer.parseInt(taskString[5]), Instant.ofEpochMilli(Long.parseLong(taskString[6])),
+                    Integer.parseInt(taskString[5]), Instant.ofEpochMilli(Long.parseLong(taskString[6])),
                     Long.parseLong(taskString[7]));
             subTask.setId(Integer.parseInt(taskString[0]));
             return subTask;
@@ -291,27 +288,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         //СОЗДАНИЕ
         Task task1 = new Task(TypeOfTask.TASK, "Новая задача 1", "Описание первой задачи", Status.NEW,
-                Instant.now(), 2);
+                Instant.ofEpochMilli(1664617220000L), 2);
         fileBackedTasksManager.addTask(task1);
         Task task2 = new Task(TypeOfTask.TASK, "Новая задача 2", "Описание второй задачи", Status.NEW,
-                Instant.now(), 0);
+                Instant.ofEpochMilli(1664617830000L), 10);
         fileBackedTasksManager.addTask(task2);
 
         Epic epic3 = new Epic(TypeOfTask.EPIC, "Новый эпик 1", "Описание первого эпика", Status.NEW,
-                Instant.now(), 0);
+                Instant.ofEpochMilli(0), 0);
         fileBackedTasksManager.addEpic(epic3);
         Epic epic4 = new Epic(TypeOfTask.EPIC, "Новый эпик 2", "Описание второго эпика", Status.NEW,
-                Instant.now(), 0);
+                Instant.ofEpochMilli(0), 0);
         fileBackedTasksManager.addEpic(epic4);
 
         SubTask subTaskShop = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 1", "Описание первого сабтаска",
-                Status.DONE, 3, Instant.now(), 2);
+                Status.DONE, 3, Instant.ofEpochMilli(1662041700000L), 10);
         fileBackedTasksManager.addSubTask(subTaskShop);
         SubTask subTaskBuy = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 2", "Описание второго сабтаска",
-                Status.IN_PROGRESS, 3, Instant.now(), 3);
+                Status.IN_PROGRESS, 3, Instant.ofEpochMilli(1662042000000L), 15);
         fileBackedTasksManager.addSubTask(subTaskBuy);
         SubTask subTaskCar = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 3", "Описание третьего сабтаска",
-                Status.NEW, 3, Instant.now(), 15);
+                Status.NEW, 3, Instant.ofEpochMilli(1664571000000L), 15);
         fileBackedTasksManager.addSubTask(subTaskCar);
 
         //ПОЛУЧЕНИЕ ПО ИДЕНТИФИКАТОРУ
