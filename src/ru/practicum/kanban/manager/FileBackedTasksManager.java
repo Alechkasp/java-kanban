@@ -3,8 +3,10 @@ package ru.practicum.kanban.manager;
 import ru.practicum.kanban.models.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +29,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static final Path path = Path.of("resources/file.csv");
 
     public void save(Path path) {
-        try (FileWriter fileWriter = new FileWriter(path.toFile(), false)) {
+        try (FileWriter fileWriter = new FileWriter(path.toFile(), StandardCharsets.UTF_8,false)) {
             StringBuilder builder = new StringBuilder();
-            builder.append("id,type,name,status,description,epic" + lineSeparator);
+            builder.append("id,type,name,status,description,epic,startTime,endTime,duration" + lineSeparator);
             for (Task t : getTasks()) {
                 builder.append(t.toString() + lineSeparator);
             }
@@ -40,7 +42,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 builder.append(s.toString() + lineSeparator);
             }
             builder.append(lineSeparator);
-            builder.append(historyToString(inMemoryHistoryManager));
+
+            if (historyToString(inMemoryHistoryManager).isEmpty()) {
+                builder.append("История пустая");
+            } else {
+                builder.append(historyToString(inMemoryHistoryManager));
+            }
             String asString = builder.toString();
             fileWriter.write(asString);
         } catch (IOException e) {
@@ -72,7 +79,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
         try {
-            String file = Files.readString(path);
+            String file = Files.readString(path, StandardCharsets.UTF_8);
             String[] rows = file.split(System.lineSeparator());
             for (int i = 1; i < rows.length - 2; i++) {
                 String[] s = rows[i].split(",");
@@ -103,29 +110,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
 
-            for (Integer i : historyFromString(rows[rows.length - 1])) {
-                for (Task t : tableTasks.values()) {
-                    if (t.getId() == i) {
-                        inMemoryHistoryManager.add(t);
+            if ((rows.length > 1) && !(rows[rows.length - 1].equals("История пустая"))) {
+                for (Integer i : historyFromString(rows[rows.length - 1])) {
+                    for (Task t : tableTasks.values()) {
+                        if (t.getId() == i) {
+                            inMemoryHistoryManager.add(t);
+                        }
+                    }
+                    for (Epic e : tableEpics.values()) {
+                        if (e.getId() == i) {
+                            inMemoryHistoryManager.add(e);
+                        }
+                    }
+                    for (SubTask s : tableSubTasks.values()) {
+                        if (s.getId() == i) {
+                            inMemoryHistoryManager.add(s);
+                        }
                     }
                 }
-                for (Epic e : tableEpics.values()) {
-                    if (e.getId() == i) {
-                        inMemoryHistoryManager.add(e);
-                    }
-                }
-                for (SubTask s : tableSubTasks.values()) {
-                    if (s.getId() == i) {
-                        inMemoryHistoryManager.add(s);
-                    }
-                }
+
+                System.out.println(tableTasks);
+                System.out.println(tableEpics);
+                System.out.println(tableSubTasks);
+
+                System.out.println(historyFromString(rows[rows.length - 1]));
             }
-
-            System.out.println(tableTasks);
-            System.out.println(tableEpics);
-            System.out.println(tableSubTasks);
-
-            System.out.println(historyFromString(rows[rows.length - 1]));
 
             return new FileBackedTasksManager(id, tableTasks, tableEpics, tableSubTasks, inMemoryHistoryManager);
 
@@ -138,7 +147,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static Task fromStringTask(String value) {
         String[] taskString = value.split(",");
         if (taskString[1].equals("TASK")) {
-            Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], statusDetermination(value));
+/*          Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], statusDetermination(value),
+                    Instant.ofEpochMilli(Long.parseLong(taskString[5])), Long.parseLong(taskString[6]));
+            task.setId(Integer.parseInt(taskString[0]));*/
+            Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], statusDetermination(value),
+                    Instant.ofEpochMilli(Long.parseLong(taskString[5])), Long.parseLong(taskString[6]));
             task.setId(Integer.parseInt(taskString[0]));
             return task;
         }
@@ -149,7 +162,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static Epic fromStringEpic(String value) {
         String[] taskString = value.split(",");
         if (taskString[1].equals("EPIC")) {
-            Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], statusDetermination(value));
+            Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], statusDetermination(value),
+                    Instant.ofEpochMilli(Long.parseLong(taskString[5])), Long.parseLong(taskString[6]));
             epic.setId(Integer.parseInt(taskString[0]));
             return epic;
         }
@@ -161,7 +175,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] taskString = value.split(",");
         if (taskString[1].equals("SUBTASK")) {
             SubTask subTask = new SubTask(TypeOfTask.SUBTASK, taskString[2], taskString[4], statusDetermination(value),
-                        Integer.parseInt(taskString[5]));
+                        Integer.parseInt(taskString[5]), Instant.ofEpochMilli(Long.parseLong(taskString[6])),
+                    Long.parseLong(taskString[7]));
             subTask.setId(Integer.parseInt(taskString[0]));
             return subTask;
         }
@@ -275,24 +290,28 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
 
         //СОЗДАНИЕ
-        Task task1 = new Task(TypeOfTask.TASK, "Новая задача 1", "Описание первой задачи", Status.NEW);
+        Task task1 = new Task(TypeOfTask.TASK, "Новая задача 1", "Описание первой задачи", Status.NEW,
+                Instant.now(), 2);
         fileBackedTasksManager.addTask(task1);
-        Task task2 = new Task(TypeOfTask.TASK, "Новая задача 2", "Описание второй задачи", Status.NEW);
+        Task task2 = new Task(TypeOfTask.TASK, "Новая задача 2", "Описание второй задачи", Status.NEW,
+                Instant.now(), 0);
         fileBackedTasksManager.addTask(task2);
 
-        Epic epic3 = new Epic(TypeOfTask.EPIC, "Новый эпик 1", "Описание первого эпика", Status.NEW);
+        Epic epic3 = new Epic(TypeOfTask.EPIC, "Новый эпик 1", "Описание первого эпика", Status.NEW,
+                Instant.now(), 0);
         fileBackedTasksManager.addEpic(epic3);
-        Epic epic4 = new Epic(TypeOfTask.EPIC, "Новый эпик 2", "Описание второго эпика", Status.NEW);
+        Epic epic4 = new Epic(TypeOfTask.EPIC, "Новый эпик 2", "Описание второго эпика", Status.NEW,
+                Instant.now(), 0);
         fileBackedTasksManager.addEpic(epic4);
 
         SubTask subTaskShop = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 1", "Описание первого сабтаска",
-                Status.DONE, 3);
+                Status.DONE, 3, Instant.now(), 2);
         fileBackedTasksManager.addSubTask(subTaskShop);
         SubTask subTaskBuy = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 2", "Описание второго сабтаска",
-                Status.IN_PROGRESS, 3);
+                Status.IN_PROGRESS, 3, Instant.now(), 3);
         fileBackedTasksManager.addSubTask(subTaskBuy);
         SubTask subTaskCar = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 3", "Описание третьего сабтаска",
-                Status.NEW, 3);
+                Status.NEW, 3, Instant.now(), 15);
         fileBackedTasksManager.addSubTask(subTaskCar);
 
         //ПОЛУЧЕНИЕ ПО ИДЕНТИФИКАТОРУ

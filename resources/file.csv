@@ -1,9 +1,8 @@
-id,type,name,status,description,epic
-1,TASK,Test addNewTask1,NEW,Test addNewTask description1
-2,TASK,Test addNewTask2,IN_PROGRESS,Test addNewTask description2
-3,EPIC,Test addNewEpic1,IN_PROGRESS,Test addNewEpic description1
-4,EPIC,Test addNewEpic2,DONE,Test addNewEpic description2
-5,SUBTASK,Test addNewSubTask1,IN_PROGRESS,Test addNewSubTask1 description,3
-6,SUBTASK,Test addNewSubTask2,DONE,Test addNewSubTask2 description,4
+id,type,name,status,description,epic,startTime,endTime,duration
+1,TASK,Новая задача 1,NEW,Описание первой задачи,1664547568529,2
+3,EPIC,Новый эпик 1,IN_PROGRESS,Описание первого эпика,1664547568618,0
+5,SUBTASK,Новый сабтаск 1,DONE,Описание первого сабтаска,1664547568623,2
+6,SUBTASK,Новый сабтаск 2,IN_PROGRESS,Описание второго сабтаска,1664547568626,3
+7,SUBTASK,Новый сабтаск 3,NEW,Описание третьего сабтаска,1664547568627,15
 
-6,5,4,3,2,1
+1,6,7,5,3

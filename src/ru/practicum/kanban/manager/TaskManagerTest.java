@@ -3,6 +3,7 @@ package ru.practicum.kanban.manager;
 import org.junit.jupiter.api.Test;
 import ru.practicum.kanban.models.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldAddNewTask() {
             Task task = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             final int taskId = taskManager.addTask(task).getId();
 
             final Task savedTask = taskManager.getTask(taskId);
@@ -35,13 +36,13 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldAddNewEpic() {
             Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             final int epicId = taskManager.addEpic(epic).getId();
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                    "Test addNewSubTask1 description", Status.DONE, epicId);
+                    "Test addNewSubTask1 description", Status.DONE, epicId, Instant.now(), 0);
             taskManager.addSubTask(subTaskFirst);
             SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                    "Test addNewSubTask2 description", Status.IN_PROGRESS, epicId);
+                    "Test addNewSubTask2 description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
             taskManager.addSubTask(subTaskSecond);
 
             final Epic savedEpic = taskManager.getEpic(epicId);
@@ -60,11 +61,11 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldAddNewSubTask() {
             Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             final int epicId = taskManager.addEpic(epic).getId();
 
             SubTask subTask = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicId);
+                    "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
             final int subTaskId = taskManager.addSubTask(subTask).getId();
 
             final SubTask savedSubTask = taskManager.getSubTask(subTaskId);
@@ -83,10 +84,10 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldGetListTasks() {
             Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addTask(taskFirst);
             Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addTask(taskSecond);
 
             final List<Task> tasks = taskManager.getTasks();
@@ -100,10 +101,10 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldGetListEpics() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addEpic(epicFirst);
             Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.IN_PROGRESS);
+                    Status.IN_PROGRESS, Instant.now(), 0);
             taskManager.addEpic(epicSecond);
 
             final List<Epic> epics = taskManager.getEpics();
@@ -117,13 +118,13 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldGetListSubTasks() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addEpic(epicFirst);
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicFirst.getId());
+                    "Test addNewSubTask description", Status.NEW, epicFirst.getId(), Instant.now(), 0);
             taskManager.addSubTask(subTaskFirst);
             SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicFirst.getId());
+                    "Test addNewSubTask description", Status.NEW, epicFirst.getId(), Instant.now(), 0);
             taskManager.addSubTask(subTaskSecond);
 
             final List<SubTask> subTasks = taskManager.getSubTasks();
@@ -145,7 +146,7 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldGetTask() {
             Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addTask(taskFirst);
 
             final int taskId = taskFirst.getId();
@@ -161,13 +162,13 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldGetEpic() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addEpic(epicFirst);
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.DONE, epicFirst.getId());
+                    "Test addNewSubTask description", Status.DONE, epicFirst.getId(), Instant.now(), 0);
             taskManager.addSubTask(subTaskFirst);
             SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.DONE, epicFirst.getId());
+                    "Test addNewSubTask description", Status.DONE, epicFirst.getId(), Instant.now(), 0);
             taskManager.addSubTask(subTaskSecond);
 
             final int epicId = epicFirst.getId();
@@ -190,10 +191,10 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldGetSubTask() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addEpic(epicFirst);
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.IN_PROGRESS, epicFirst.getId());
+                    "Test addNewSubTask description", Status.IN_PROGRESS, epicFirst.getId(), Instant.now(), 0);
             taskManager.addSubTask(subTaskFirst);
 
             final int subTaskId = subTaskFirst.getId();
@@ -211,13 +212,13 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldUpdateTask() {
             Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addTask(taskFirst);
 
             final int taskId = taskFirst.getId();
 
             Task taskUpdate = new Task(TypeOfTask.TASK, "Test updateTask", "Test updateTask description",
-                    Status.IN_PROGRESS);
+                    Status.IN_PROGRESS, Instant.now(), 0);
             taskUpdate.setId(taskId);
             taskManager.updateTask(taskUpdate);
 
@@ -231,13 +232,13 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldUpdateEpic() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addEpic(epicFirst);
 
             final int epicId = epicFirst.getId();
 
             Epic epicUpdate = new Epic(TypeOfTask.EPIC, "Test updateEpic", "Test updateEpic description",
-                    Status.IN_PROGRESS);
+                    Status.IN_PROGRESS, Instant.now(), 0);
             epicUpdate.setId(epicId);
             taskManager.updateEpic(epicUpdate);
 
@@ -251,16 +252,16 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldUpdateSubTask() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             taskManager.addEpic(epicFirst);
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicFirst.getId());
+                    "Test addNewSubTask description", Status.NEW, epicFirst.getId(), Instant.now(), 0);
             taskManager.addSubTask(subTaskFirst);
 
             final int subTaskId = subTaskFirst.getId();
 
             SubTask subTaskUpdate = new SubTask(TypeOfTask.SUBTASK, "Test updateSubTask",
-                    "Test updateSubTask description", Status.IN_PROGRESS, epicFirst.getId());
+                    "Test updateSubTask description", Status.IN_PROGRESS, epicFirst.getId(), Instant.now(), 0);
             subTaskUpdate.setId(subTaskId);
             taskManager.updateSubTask(subTaskUpdate);
 
@@ -274,10 +275,10 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldDelTask() {
             Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
-                    Status.NEW);
+                    Status.NEW, Instant.now(), 0);
             final int taskId = taskManager.addTask(taskFirst).getId();
             Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
-                    Status.IN_PROGRESS);
+                    Status.IN_PROGRESS, Instant.now(), 0);
             taskManager.addTask(taskSecond);
 
             taskManager.delTask(taskId);
@@ -293,13 +294,13 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldDelEpic() {
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicId = taskManager.addEpic(epicFirst).getId();
         Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         taskManager.addEpic(epicSecond);
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId);
+                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
 
         taskManager.delEpic(epicId);
@@ -316,13 +317,13 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldDelSubTask() {
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         taskManager.addEpic(epicFirst);
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirst.getId());
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirst.getId(), Instant.now(), 0);
         final int subTaskId = taskManager.addSubTask(subTaskFirst).getId();
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                "Test addNewSubTask2 description", Status.DONE, epicFirst.getId());
+                "Test addNewSubTask2 description", Status.DONE, epicFirst.getId(), Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
 
         taskManager.delSubTask(subTaskId);
@@ -339,14 +340,14 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldGetEpicSubTask() {
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicFirstId = taskManager.addEpic(epicFirst).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                "Test addNewSubTask2 description", Status.DONE, epicFirstId);
+                "Test addNewSubTask2 description", Status.DONE, epicFirstId, Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
 
         final List<SubTask> savedSubTasks = taskManager.getEpicSubTasks(epicFirstId);
@@ -365,10 +366,10 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldDelListTasks() {
         Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         taskManager.addTask(taskFirst);
         Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
-                Status.IN_PROGRESS);
+                Status.IN_PROGRESS, Instant.now(), 0);
         taskManager.addTask(taskSecond);
 
         assertNotNull(taskManager.getTasks(), "Задачи нe возвращаются.");
@@ -381,13 +382,13 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldDelListEpics() {
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         taskManager.addEpic(epicFirst);
         Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         taskManager.addEpic(epicSecond);
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.IN_PROGRESS, epicFirst.getId());
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicFirst.getId(), Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
 
         assertNotNull(taskManager.getEpics(), "Задачи нe возвращаются.");
@@ -404,14 +405,14 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldDelListSubTasks() {
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicFirstId = taskManager.addEpic(epicFirst).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                "Test addNewSubTask2 description", Status.DONE, epicFirstId);
+                "Test addNewSubTask2 description", Status.DONE, epicFirstId, Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
 
         assertNotNull(taskManager.getEpics(), "Задачи нe возвращаются.");
@@ -429,24 +430,24 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldNoAddToHistory() {
         Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         taskManager.addTask(taskFirst);
         Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
-                Status.IN_PROGRESS);
+                Status.IN_PROGRESS, Instant.now(), 0);
         taskManager.addTask(taskSecond);
 
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicFirstId = taskManager.addEpic(epicFirst).getId();
         Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicSecondId = taskManager.addEpic(epicSecond).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                "Test addNewSubTask2 description", Status.DONE, epicSecondId);
+                "Test addNewSubTask2 description", Status.DONE, epicSecondId, Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
 
         final List<Task> savedHistory = taskManager.getHistory();
@@ -458,24 +459,24 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldAddToHistory() {
         Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int taskFirstId = taskManager.addTask(taskFirst).getId();
         Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
-                Status.IN_PROGRESS);
+                Status.IN_PROGRESS, Instant.now(), 0);
         final int taskSecondId = taskManager.addTask(taskSecond).getId();
 
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicFirstId = taskManager.addEpic(epicFirst).getId();
         Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicSecondId = taskManager.addEpic(epicSecond).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId, Instant.now(), 0);
         final int subTaskFirstId = taskManager.addSubTask(subTaskFirst).getId();
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                "Test addNewSubTask2 description", Status.DONE, epicSecondId);
+                "Test addNewSubTask2 description", Status.DONE, epicSecondId, Instant.now(), 0);
         final int subTaskSecondId = taskManager.addSubTask(subTaskSecond).getId();
 
         taskManager.getTask(taskFirstId);
@@ -504,24 +505,24 @@ public class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldRemoveFromHistory() {
         Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask1", "Test addNewTask description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int taskFirstId = taskManager.addTask(taskFirst).getId();
         Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask2", "Test addNewTask description2",
-                Status.IN_PROGRESS);
+                Status.IN_PROGRESS, Instant.now(), 0);
         final int taskSecondId = taskManager.addTask(taskSecond).getId();
 
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicFirstId = taskManager.addEpic(epicFirst).getId();
         Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicSecondId = taskManager.addEpic(epicSecond).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId);
+                "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId, Instant.now(), 0);
         final int subTaskFirstId = taskManager.addSubTask(subTaskFirst).getId();
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                "Test addNewSubTask2 description", Status.DONE, epicSecondId);
+                "Test addNewSubTask2 description", Status.DONE, epicSecondId, Instant.now(), 0);
         final int subTaskSecondId = taskManager.addSubTask(subTaskSecond).getId();
 
         taskManager.getTask(taskFirstId);

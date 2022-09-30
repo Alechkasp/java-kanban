@@ -5,6 +5,7 @@ import ru.practicum.kanban.models.Status;
 import ru.practicum.kanban.models.SubTask;
 import ru.practicum.kanban.models.Task;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,10 @@ public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Epic> tableEpics = new HashMap<>();
     protected Map<Integer, SubTask> tableSubTasks = new HashMap<>();
     protected HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+/*    protected static long EARLY_SUBTASK_TIME_STATUS_NEW = 2_000_000_000_000L;
+    protected static long LATE_SUBTASK_TIME_STATUS_NEW = 0L;
+    protected static long EARLY_SUBTASK_TIME_STATUS_DONE = 2_000_000_000_000L;
+    protected static long LATE_SUBTASK_TIME_STATUS_DONE = 0L;*/
 
     //добавить задачу типа Task
     @Override
@@ -199,12 +204,20 @@ public class InMemoryTaskManager implements TaskManager {
     private void updateEpicStatus(int epicId) {
         int countNew = 0;
         int countDone = 0;
+/*        Instant startTimeNew = Instant.ofEpochMilli(tableSubTasks.get(0).getStartTime());
+        Instant endTimeNew = Instant.ofEpochMilli(tableSubTasks.get(0).getEndTime());*/
 
         for (Integer subTask : tableSubTasks.keySet()) {
             if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
                 if (tableSubTasks.get(subTask).getStatus().equals(Status.NEW)) {
                     countNew++;
                 }
+/*                if (Instant.ofEpochMilli(tableSubTasks.get(subTask).getStartTime()).isBefore(startTimeNew)) {
+                    startTimeNew = Instant.ofEpochMilli(tableSubTasks.get(subTask).getStartTime());
+                }
+                if (Instant.ofEpochMilli(tableSubTasks.get(subTask).getEndTime()).isAfter(endTimeNew)) {
+                    endTimeNew = Instant.ofEpochMilli(tableSubTasks.get(subTask).getEndTime());
+                }*/
             }
         }
 
@@ -213,6 +226,12 @@ public class InMemoryTaskManager implements TaskManager {
                 if (tableSubTasks.get(subTask).getStatus().equals(Status.DONE)) {
                     countDone++;
                 }
+//                if (tableSubTasks.get(subTask).getDuration() < EARLY_SUBTASK_TIME_STATUS_DONE) {
+//                    EARLY_SUBTASK_TIME_STATUS_DONE = tableSubTasks.get(subTask).getDuration();
+//                }
+//                if (tableSubTasks.get(subTask).getDuration() > LATE_SUBTASK_TIME_STATUS_DONE) {
+//                    LATE_SUBTASK_TIME_STATUS_DONE = tableSubTasks.get(subTask).getDuration();
+//                }
             }
         }
 
@@ -225,6 +244,12 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (withoutSubTask || withSubTaskStatusNew) {
             getEpicForSubTask(epicId).setStatus(Status.NEW);
+/*            endTime = EARLY_SUBTASK_TIME_STATUS_NEW +
+
+            long SECONDS_IN_MINUTE = 60L;
+            return startTime.plusSeconds(duration * SECONDS_IN_MINUTE).toEpochMilli();
+
+            getEpicForSubTask(epicId).setDuration();*/
         } else if (withSubTaskStatusDone) {
             getEpicForSubTask(epicId).setStatus(Status.DONE);
         } else {

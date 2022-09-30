@@ -1,5 +1,7 @@
 package ru.practicum.kanban.models;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +9,8 @@ public class Epic extends Task {
 
     private final List<Integer> subTasksIds;
 
-    public Epic(TypeOfTask type, String name, String description, Status status) {
-        super(type, name, description, status);
+    public Epic(TypeOfTask type, String name, String description, Status status, Instant startTime, long duration) {
+        super(type, name, description, status, startTime, duration);
         subTasksIds = new ArrayList<>();
     }
 
@@ -39,9 +41,15 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),
-                getStatus().toString(), getDescription());
-        //result = result + ", subTasksIds=" + subTasksIds;
-        return result;
+/*        String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),
+                getStatus().toString(), getDescription(), Long.toString(getStartTime()), Long.toString(getDuration()));
+        return result;*/
+        return getId() + "," +
+                getType() + "," +
+                getName() + "," +
+                getStatus() + "," +
+                getDescription() + "," +
+                getStartTime().toEpochMilli() + "," +
+                getDuration();
     }
 }

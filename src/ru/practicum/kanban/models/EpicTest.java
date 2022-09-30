@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import ru.practicum.kanban.manager.Managers;
 import ru.practicum.kanban.manager.TaskManager;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +15,8 @@ class EpicTest {
 
     @Test
     void addNewEpic() {
-        Epic epic = new Epic(TypeOfTask.EPIC,"Test addNewEpic", "Test addNewEpic description", Status.NEW);
+        Epic epic = new Epic(TypeOfTask.EPIC,"Test addNewEpic", "Test addNewEpic description", Status.NEW,
+                Instant.now(), 0);
         final int epicId = taskManager.addEpic(epic).getId();
 
         final Epic savedEpic = taskManager.getEpic(epicId);
@@ -32,7 +34,7 @@ class EpicTest {
     @Test
     void shouldUpdateEpicStatusWith0SubTasks() {
         Epic epic = new Epic(TypeOfTask.EPIC,"Test addNewEpic", "Test addNewEpic description",
-                Status.IN_PROGRESS);
+                Status.IN_PROGRESS, Instant.now(), 0);
         final int epicId = taskManager.addEpic(epic).getId();
 
         final Epic savedEpic = taskManager.getEpic(epicId);
@@ -43,17 +45,17 @@ class EpicTest {
     @Test
     void shouldUpdateEpicStatusWith3SubTasksWithStatusNEW() {
         Epic epic = new Epic(TypeOfTask.EPIC,"Test addNewEpic", "Test addNewEpic description",
-                Status.IN_PROGRESS);
+                Status.IN_PROGRESS, Instant.now(), 0);
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId);
+                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId);
+                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId);
+                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
@@ -64,17 +66,17 @@ class EpicTest {
     @Test
     void shouldUpdateEpicStatusWith3SubTasksWithStatusDONE() {
         Epic epic = new Epic(TypeOfTask.EPIC,"Test addNewEpic", "Test addNewEpic description",
-                Status.IN_PROGRESS);
+                Status.IN_PROGRESS, Instant.now(), 0);
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId);
+                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId);
+                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId);
+                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
@@ -85,17 +87,17 @@ class EpicTest {
     @Test
     void shouldUpdateEpicStatusWith3SubTasksWithStatusNEWandDONE() {
         Epic epic = new Epic(TypeOfTask.EPIC,"Test addNewEpic", "Test addNewEpic description",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId);
+                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId);
+                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId);
+                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
@@ -106,17 +108,17 @@ class EpicTest {
     @Test
     void shouldUpdateEpicStatusWith3SubTasksWithStatusIN_PROGRESS() {
         Epic epic = new Epic(TypeOfTask.EPIC,"Test addNewEpic", "Test addNewEpic description",
-                Status.NEW);
+                Status.NEW, Instant.now(), 0);
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.IN_PROGRESS, epicId);
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.IN_PROGRESS, epicId);
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.IN_PROGRESS, epicId);
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
