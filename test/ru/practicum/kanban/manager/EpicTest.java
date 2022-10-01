@@ -1,8 +1,10 @@
-package ru.practicum.kanban.models;
+package ru.practicum.kanban.manager;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.kanban.manager.Managers;
-import ru.practicum.kanban.manager.TaskManager;
+import ru.practicum.kanban.models.Epic;
+import ru.practicum.kanban.models.Status;
+import ru.practicum.kanban.models.SubTask;
+import ru.practicum.kanban.models.TypeOfTask;
 
 import java.time.Instant;
 import java.util.List;

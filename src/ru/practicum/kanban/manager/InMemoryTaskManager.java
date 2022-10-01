@@ -7,6 +7,7 @@ import ru.practicum.kanban.models.Task;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     int id = 0;
@@ -168,7 +169,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer subTask : getEpic(id).getSubTasks()) {
             if (tableSubTasks.containsKey(subTask)) {
                 inMemoryHistoryManager.remove(tableSubTasks.get(subTask).getId());
-                removeFromPrioritizedTasksList(tableSubTasks.get(id));
+                removeFromPrioritizedTasksList(tableSubTasks.get(subTask));
                 tableSubTasks.remove(subTask);
             }
         }
@@ -235,7 +236,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 //дата окончания самой поздней из задач
                 if (tableSubTasks.get(subTask).getEndTime().isAfter(endTime)) {
-                    endTime = tableTasks.get(subTask).getEndTime();
+                    endTime = tableSubTasks.get(subTask).getEndTime();
                 }
             }
         }
@@ -276,9 +277,31 @@ public class InMemoryTaskManager implements TaskManager {
 
     public void addToPrioritizedTasksList(Task task) {
         prioritizedTasks.add(task);
+        checkTasks();
     }
 
     public void removeFromPrioritizedTasksList(Task task) {
         prioritizedTasks.remove(task);
+    }
+
+    public void checkTasks() {
+        List<Task> priorTasks = prioritizedTasks.stream().collect(Collectors.toList());
+
+        for (int i = 1; i < priorTasks.size() - 1; i++) {
+            Task prevTask = priorTasks.get(i-1);
+            Task curTask = priorTasks.get(i);
+            Task nextTask = priorTasks.get(i + 1);
+
+            boolean checkStartTime = curTask.getStartTime().isBefore(prevTask.getEndTime());
+            boolean checkEndTime = curTask.getEndTime().isAfter(nextTask.getStartTime());
+
+            if (checkStartTime ) {
+                throw new ManagerCheckException("Задача пересекается с предыдущей");
+            }
+
+            if (checkEndTime) {
+                throw new ManagerCheckException("Задача пересекается со следующей");
+            }
+        }
     }
 }

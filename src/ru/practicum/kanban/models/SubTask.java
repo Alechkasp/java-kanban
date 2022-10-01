@@ -19,9 +19,8 @@ public class SubTask extends Task {
     @Override
     public String toString() {
        String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),
-                getStatus().toString(), getDescription(), Integer.toString(getEpicId()),
-               Long.toString(getDuration()), Long.toString(getStartTime().toEpochMilli()),
-               Long.toString(getEndTime().toEpochMilli()));
+               getStatus().toString(), getDescription(), Long.toString(getDuration()),
+               Long.toString(getStartTime().toEpochMilli()), Integer.toString(getEpicId()));
         return result;
     }
 }

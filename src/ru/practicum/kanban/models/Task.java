@@ -11,8 +11,8 @@ public class Task {
     private Status status;
     private Instant startTime;
     private long duration;
-    long SECONDS_IN_MINUTE = 60;
-    Instant endTime;
+    private long SECONDS_IN_MINUTE = 60;
+    private Instant endTime;
 
     public Task(TypeOfTask type, String name, String description, Status status, Instant startTime, long duration) {
         this.type = type;
@@ -96,8 +96,7 @@ public class Task {
     @Override
     public String toString() {
         String result = String.join(",", Integer.toString(id), type.toString(), name, status.toString(),
-                description, Long.toString(getDuration()), Long.toString(startTime.toEpochMilli()),
-                Long.toString(getEndTime().toEpochMilli()));
+                description, Long.toString(getDuration()), Long.toString(startTime.toEpochMilli()));
         return result;
     }
 }

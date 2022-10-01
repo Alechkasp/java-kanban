@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import ru.practicum.kanban.models.*;
 
 import java.time.Instant;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldAddNewTask() {
             Task task = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW, Instant.now(), 0);
+                    Status.NEW, Instant.ofEpochMilli(1665386700000L), 20);
             final int taskId = taskManager.addTask(task).getId();
 
             final Task savedTask = taskManager.getTask(taskId);
@@ -36,13 +37,15 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldAddNewEpic() {
             Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW, Instant.now(), 0);
+                    Status.NEW, Instant.ofEpochMilli(0), 0);
             final int epicId = taskManager.addEpic(epic).getId();
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
-                    "Test addNewSubTask1 description", Status.DONE, epicId, Instant.now(), 0);
+                    "Test addNewSubTask1 description", Status.DONE, epicId,
+                    Instant.now(), 10);
             taskManager.addSubTask(subTaskFirst);
             SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                    "Test addNewSubTask2 description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
+                    "Test addNewSubTask2 description", Status.IN_PROGRESS, epicId,
+                    Instant.now(), 15);
             taskManager.addSubTask(subTaskSecond);
 
             final Epic savedEpic = taskManager.getEpic(epicId);
@@ -61,11 +64,12 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldAddNewSubTask() {
             Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW, Instant.now(), 0);
+                    Status.NEW, Instant.ofEpochMilli(0), 0);
             final int epicId = taskManager.addEpic(epic).getId();
 
             SubTask subTask = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
+                    "Test addNewSubTask description", Status.NEW, epicId,
+                    Instant.ofEpochMilli(1665401100000L), 15);
             final int subTaskId = taskManager.addSubTask(subTask).getId();
 
             final SubTask savedSubTask = taskManager.getSubTask(subTaskId);
@@ -83,103 +87,59 @@ public class TaskManagerTest<T extends TaskManager> {
 
         @Test
         void shouldGetListTasks() {
-            Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW, Instant.now(), 0);
-            taskManager.addTask(taskFirst);
-            Task taskSecond = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW, Instant.now(), 0);
-            taskManager.addTask(taskSecond);
+            final List<Task> epics = taskManager.getTasks();
 
-            final List<Task> tasks = taskManager.getTasks();
-
-            assertNotNull(tasks, "Задачи нe возвращаются.");
-            assertEquals(2, tasks.size(), "Неверное количество задач.");
-            assertEquals(taskFirst, tasks.get(0), "Задачи не совпадают.");
-            assertEquals(taskSecond, tasks.get(1), "Задачи не совпадают.");
+            assertNotNull(epics, "Задачи нe возвращаются.");
         }
 
         @Test
         void shouldGetListEpics() {
-            Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW, Instant.now(), 0);
-            taskManager.addEpic(epicFirst);
-            Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.IN_PROGRESS, Instant.now(), 0);
-            taskManager.addEpic(epicSecond);
-
             final List<Epic> epics = taskManager.getEpics();
 
             assertNotNull(epics, "Задачи нe возвращаются.");
-            assertEquals(2, epics.size(), "Неверное количество задач.");
-            assertEquals(epicFirst, epics.get(0), "Задачи не совпадают.");
-            assertEquals(epicSecond, epics.get(1), "Задачи не совпадают.");
         }
 
         @Test
         void shouldGetListSubTasks() {
-            Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW, Instant.now(), 0);
-            taskManager.addEpic(epicFirst);
-            SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicFirst.getId(), Instant.now(), 0);
-            taskManager.addSubTask(subTaskFirst);
-            SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicFirst.getId(), Instant.now(), 0);
-            taskManager.addSubTask(subTaskSecond);
-
             final List<SubTask> subTasks = taskManager.getSubTasks();
 
             assertNotNull(subTasks, "Задачи нe возвращаются.");
-            assertNotNull(epicFirst, "Эпик не найден");
-            assertEquals(2, subTasks.size(), "Неверное количество задач.");
-            assertEquals(subTaskFirst, subTasks.get(0), "Задачи не совпадают.");
-            assertEquals(subTaskSecond, subTasks.get(1), "Задачи не совпадают.");
-
-            final List<Integer> subTaskIds = new ArrayList<>();;
-            for (SubTask s : taskManager.getSubTasks()) {
-                subTaskIds.add(s.getId());
-            }
-
-            assertEquals(epicFirst.getSubTasks(), subTaskIds, "Списки id подзадач эпика не совпадают");
         }
 
         @Test
         void shouldGetTask() {
-            Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW, Instant.now(), 0);
-            taskManager.addTask(taskFirst);
-
-            final int taskId = taskFirst.getId();
+            Task task = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
+                    Status.NEW, Instant.ofEpochMilli(1665386700000L), 20);
+            final int taskId = taskManager.addTask(task).getId();
 
             final Task savedTask = taskManager.getTask(taskId);
 
             assertNotNull(savedTask, "Задача не найдена.");
-            assertNotNull(taskManager.getTasks(), "Список тасков пустой");
             assertEquals(1, taskId, "Неверный id задачи");
-            assertEquals(taskFirst, savedTask, "Задачи не совпадают.");
+            assertEquals(task, savedTask, "Задачи не совпадают.");
         }
 
         @Test
         void shouldGetEpic() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW, Instant.now(), 0);
+                    Status.NEW, Instant.ofEpochMilli(0), 0);
             taskManager.addEpic(epicFirst);
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.DONE, epicFirst.getId(), Instant.now(), 0);
+                    "Test addNewSubTask description", Status.DONE, epicFirst.getId(),
+                    Instant.now(), 15);
             taskManager.addSubTask(subTaskFirst);
-            SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.DONE, epicFirst.getId(), Instant.now(), 0);
-            taskManager.addSubTask(subTaskSecond);
 
             final int epicId = epicFirst.getId();
 
             final Epic savedEpic = taskManager.getEpic(epicId);
 
             assertNotNull(savedEpic, "Задача не найдена.");
-            assertNotNull(taskManager.getEpics(), "Список эпиков пустой");
             assertEquals(1, epicId, "Неверный id задачи");
             assertEquals(epicFirst, savedEpic, "Задачи не совпадают.");
-            assertEquals(epicFirst.getStatus(), Status.DONE, "Неверно рассчитан статус Эпика.");
+            assertEquals(savedEpic.getStatus(), Status.DONE, "Неверно рассчитан статус Эпика.");
+            assertEquals(epicFirst.getStartTime(), subTaskFirst.getStartTime(), "Неверное startTime у эпика");
+            assertEquals(epicFirst.getEndTime(), subTaskFirst.getEndTime(), "Неверное endTime у эпика");
+            assertEquals(15, savedEpic.getDuration(), "Неверная продолжительность Эпика.");
 
             final List<Integer> subTaskIds = new ArrayList<>();
             for (SubTask s : taskManager.getSubTasks()) {
@@ -191,10 +151,11 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldGetSubTask() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW, Instant.now(), 0);
+                    Status.NEW, Instant.ofEpochMilli(0), 0);
             taskManager.addEpic(epicFirst);
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.IN_PROGRESS, epicFirst.getId(), Instant.now(), 0);
+                    "Test addNewSubTask description", Status.IN_PROGRESS, epicFirst.getId(),
+                    Instant.now(), 15);
             taskManager.addSubTask(subTaskFirst);
 
             final int subTaskId = subTaskFirst.getId();
@@ -203,22 +164,20 @@ public class TaskManagerTest<T extends TaskManager> {
 
             assertNotNull(savedSubTask, "Задача не найдена.");
             assertNotNull(taskManager.getSubTasks(), "Список сабтасков пустой");
-            assertNotNull(epicFirst, "Эпик не найден");
             assertEquals(2, subTaskId, "Неверный id задачи");
             assertEquals(subTaskFirst, savedSubTask, "Задачи не совпадают.");
-            assertEquals(epicFirst.getStatus(), Status.IN_PROGRESS, "Неверно расчитан статус Эпика");
         }
 
         @Test
         void shouldUpdateTask() {
             Task taskFirst = new Task(TypeOfTask.TASK, "Test addNewTask", "Test addNewTask description",
-                    Status.NEW, Instant.now(), 0);
+                    Status.NEW, Instant.now(), 10);
             taskManager.addTask(taskFirst);
 
             final int taskId = taskFirst.getId();
 
             Task taskUpdate = new Task(TypeOfTask.TASK, "Test updateTask", "Test updateTask description",
-                    Status.IN_PROGRESS, Instant.now(), 0);
+                    Status.IN_PROGRESS, Instant.now(), 10);
             taskUpdate.setId(taskId);
             taskManager.updateTask(taskUpdate);
 
@@ -232,13 +191,13 @@ public class TaskManagerTest<T extends TaskManager> {
         @Test
         void shouldUpdateEpic() {
             Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
-                    Status.NEW, Instant.now(), 0);
+                    Status.NEW, Instant.ofEpochMilli(0), 0);
             taskManager.addEpic(epicFirst);
 
             final int epicId = epicFirst.getId();
 
             Epic epicUpdate = new Epic(TypeOfTask.EPIC, "Test updateEpic", "Test updateEpic description",
-                    Status.IN_PROGRESS, Instant.now(), 0);
+                    Status.IN_PROGRESS, Instant.ofEpochMilli(0), 0);
             epicUpdate.setId(epicId);
             taskManager.updateEpic(epicUpdate);
 
@@ -255,13 +214,14 @@ public class TaskManagerTest<T extends TaskManager> {
                     Status.NEW, Instant.now(), 0);
             taskManager.addEpic(epicFirst);
             SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                    "Test addNewSubTask description", Status.NEW, epicFirst.getId(), Instant.now(), 0);
+                    "Test addNewSubTask description", Status.NEW, epicFirst.getId(), Instant.now(), 5);
             taskManager.addSubTask(subTaskFirst);
 
             final int subTaskId = subTaskFirst.getId();
 
             SubTask subTaskUpdate = new SubTask(TypeOfTask.SUBTASK, "Test updateSubTask",
-                    "Test updateSubTask description", Status.IN_PROGRESS, epicFirst.getId(), Instant.now(), 0);
+                    "Test updateSubTask description", Status.IN_PROGRESS, epicFirst.getId(),
+                    Instant.now(), 5);
             subTaskUpdate.setId(subTaskId);
             taskManager.updateSubTask(subTaskUpdate);
 

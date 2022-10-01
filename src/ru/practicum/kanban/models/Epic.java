@@ -48,7 +48,7 @@ public class Epic extends Task {
     public String toString() {
         String result = String.join(",", Integer.toString(getId()), getType().toString(), getName(),
                 getStatus().toString(), getDescription(), Long.toString(getDuration()),
-        Long.toString(getStartTime().toEpochMilli()), Long.toString(getEndTime().toEpochMilli()));
+        Long.toString(getStartTime().toEpochMilli()));
         return result;
     }
 }

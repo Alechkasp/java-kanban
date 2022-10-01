@@ -1,7 +1,7 @@
-id,type,name,status,description,epic,startTime,endTime,duration
-1,TASK,Test addNewTask1,NEW,Test addNewTask description1,1664543249049,0
-2,TASK,Test addNewTask2,IN_PROGRESS,Test addNewTask description2,1664543249050,0
-3,EPIC,Test addNewEpic1,NEW,Test addNewEpic description1,1664543249051,0
-4,EPIC,Test addNewEpic2,NEW,Test addNewEpic description2,1664543249052,0
+id,type,name,status,description,duration,startTime,epic
+1,TASK,Test addNewTask1,NEW,Test addNewTask description1,0,1664639856804
+2,TASK,Test addNewTask2,IN_PROGRESS,Test addNewTask description2,0,1664639856804
+3,EPIC,Test addNewEpic1,NEW,Test addNewEpic description1,0,1664639856804
+4,EPIC,Test addNewEpic2,NEW,Test addNewEpic description2,0,1664639856804
 
 4,3,2,1

@@ -1,8 +1,7 @@
-id,type,name,status,description,epic,duration,startTime,endTime
-1,TASK,Новая задача 1,NEW,Описание первой задачи,2,1664617220000,1664617340000
-3,EPIC,Новый эпик 1,IN_PROGRESS,Описание первого эпика,40,1662041700000,1662044100000
-5,SUBTASK,Новый сабтаск 1,DONE,Описание первого сабтаска,3,10,1662041700000,1662042300000
-6,SUBTASK,Новый сабтаск 2,IN_PROGRESS,Описание второго сабтаска,3,15,1662042000000,1662042900000
-7,SUBTASK,Новый сабтаск 3,NEW,Описание третьего сабтаска,3,15,1664571000000,1664571900000
+id,type,name,status,description,duration,startTime,epic
+1,TASK,Test addNewTask1,NEW,Test addNewTask description1,0,1664639856804
+2,TASK,Test addNewTask2,IN_PROGRESS,Test addNewTask description2,0,1664639856804
+3,EPIC,Test addNewEpic1,NEW,Test addNewEpic description1,0,1664639856804
+4,EPIC,Test addNewEpic2,NEW,Test addNewEpic description2,0,1664639856804
 
-1,6,7,5,3
+4,3,2,1
