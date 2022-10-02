@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>{
+public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
     public FileBackedTasksManagerTest() {
         super(new FileBackedTasksManager());
     }
@@ -184,9 +184,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
                 "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId, Instant.now(), 0);
         fileBackedTasksManager.addSubTask(subTaskFirst);
-        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask2",
-                "Test addNewSubTask2 description", Status.DONE, epicSecondId, Instant.now(), 0);
-        fileBackedTasksManager.addSubTask(subTaskSecond);
 
         fileBackedTasksManager.save(path);
 
@@ -196,7 +193,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         Map<Integer, Epic> tableEpics = fileBackedTasksManagerFromFile.tableEpics;
         Map<Integer, SubTask> tableSubTasks = fileBackedTasksManagerFromFile.tableSubTasks;
 
-        assertEquals(6, id, "Неверный id");
+        assertEquals(5, id, "Неверный id");
         assertEquals(fileBackedTasksManager.tableTasks, tableTasks, "Таблицы с тасками не соответствуют");
         assertEquals(fileBackedTasksManager.tableEpics, tableEpics, "Таблицы с эпиками не соответствуют");
         assertEquals(fileBackedTasksManager.tableSubTasks, tableSubTasks, "Таблицы с подзадачами не соответствуют");

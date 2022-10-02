@@ -7,7 +7,6 @@ import ru.practicum.kanban.models.Task;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     int id = 0;
@@ -285,7 +284,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public void checkTasks() {
-        List<Task> priorTasks = prioritizedTasks.stream().collect(Collectors.toList());
+        List<Task> priorTasks = new ArrayList<>(prioritizedTasks);
 
         for (int i = 1; i < priorTasks.size() - 1; i++) {
             Task prevTask = priorTasks.get(i-1);

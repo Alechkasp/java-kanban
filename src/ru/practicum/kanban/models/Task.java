@@ -11,8 +11,8 @@ public class Task {
     private Status status;
     private Instant startTime;
     private long duration;
-    private long SECONDS_IN_MINUTE = 60;
-    private Instant endTime;
+    private final long SECONDS_IN_MINUTE = 60;
+    //private Instant endTime;
 
     public Task(TypeOfTask type, String name, String description, Status status, Instant startTime, long duration) {
         this.type = type;
@@ -71,9 +71,9 @@ public class Task {
     public Instant getEndTime() {
         return startTime.plusSeconds(duration * SECONDS_IN_MINUTE);
     }
-    public void setEndTime(Instant endTime) {
-        this.endTime = endTime;
-    }
+    //public void setEndTime(Instant endTime) {
+      //  this.endTime = endTime;
+   // }
 
 
     @Override

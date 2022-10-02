@@ -29,7 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static final Path path = Path.of("resources/file.csv");
 
     public void save(Path path) {
-        try (FileWriter fileWriter = new FileWriter(path.toFile(), StandardCharsets.UTF_8,false)) {
+        try (FileWriter fileWriter = new FileWriter(path.toFile(), StandardCharsets.UTF_8, false)) {
             StringBuilder builder = new StringBuilder();
             builder.append("id,type,name,status,description,duration,startTime,epic" + lineSeparator);
             for (Task t : getTasks()) {
@@ -58,7 +58,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     //метод сохранения менеджера истории из CVS
     static String historyToString(HistoryManager manager) {
         String history = "";
-        for (Task task: manager.getHistory()) {
+        for (Task task : manager.getHistory()) {
             String taskString = task.toString();
             String[] split = taskString.split(",");
             if (history.length() == 0) {
