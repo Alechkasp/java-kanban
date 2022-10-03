@@ -33,7 +33,6 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic addEpic(Epic epic) {
         id++;
         epic.setId(id);
-        addToPrioritizedTasksList(epic);
         tableEpics.put(id, epic);
         return epic;
     }
@@ -133,6 +132,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (tableTasks.containsKey(task.getId())) {
+            addToPrioritizedTasksList(task);
             tableTasks.put(task.getId(), task);
         }
     }
@@ -149,6 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubTask(SubTask subTask) {
         if (tableSubTasks.containsKey(subTask.getId())) {
             if (tableEpics.containsKey(subTask.getEpicId())) {
+                addToPrioritizedTasksList(subTask);
                 tableSubTasks.put(subTask.getId(), subTask);
                 updateEpicStatus(tableEpics.get(subTask.getEpicId()).getId());
             }
@@ -169,12 +170,10 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer subTask : getEpic(id).getSubTasks()) {
             if (tableSubTasks.containsKey(subTask)) {
                 inMemoryHistoryManager.remove(tableSubTasks.get(subTask).getId());
-                removeFromPrioritizedTasksList(tableSubTasks.get(subTask));
                 tableSubTasks.remove(subTask);
             }
         }
         inMemoryHistoryManager.remove(id);
-        removeFromPrioritizedTasksList(tableEpics.get(id));
         tableEpics.remove(id);
     }
 
@@ -293,15 +292,15 @@ public class InMemoryTaskManager implements TaskManager {
     public void checkTasks() {
         List<Task> priorTasks = new ArrayList<>(prioritizedTasks);
 
-        if (priorTasks.size() > 3) {
-            Task prevTask = priorTasks.get(priorTasks.size() - 3);
-            Task curTask = priorTasks.get(priorTasks.size() - 2);
-            Task nextTask = priorTasks.get(priorTasks.size() - 1);
+        for (int i = 1; i < priorTasks.size() - 1; i++) {
+            Task prevTask = priorTasks.get(i-1);
+            Task curTask = priorTasks.get(i);
+            Task nextTask = priorTasks.get(i + 1);
 
             boolean checkStartTime = curTask.getStartTime().isBefore(prevTask.getEndTime());
             boolean checkEndTime = curTask.getEndTime().isAfter(nextTask.getStartTime());
 
-            if (checkStartTime) {
+            if (checkStartTime ) {
                 throw new ManagerCheckException("Задача пересекается с предыдущей");
             }
 
