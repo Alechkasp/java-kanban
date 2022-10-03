@@ -50,18 +50,21 @@ class EpicTest {
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
 
-        assertEquals(epic.getStatus(), savedEpic.getStatus(), "Статусы не совпадают.");
+        assertEquals(savedEpic.getStatus(), Status.NEW, "Статусы не совпадают.");
     }
 
     @Test
@@ -71,18 +74,21 @@ class EpicTest {
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
 
-        assertEquals(epic.getStatus(), savedEpic.getStatus(), "Статусы не совпадают.");
+        assertEquals(savedEpic.getStatus(), Status.DONE, "Статусы не совпадают.");
     }
 
     @Test
@@ -92,18 +98,21 @@ class EpicTest {
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.NEW, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.DONE, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
 
-        assertEquals(epic.getStatus(), savedEpic.getStatus(), "Статусы не совпадают.");
+        assertEquals(savedEpic.getStatus(), Status.IN_PROGRESS, "Статусы не совпадают.");
     }
 
     @Test
@@ -113,13 +122,16 @@ class EpicTest {
         final int epicId = taskManager.addEpic(epic).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
         taskManager.addSubTask(subTaskFirst);
         SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
         taskManager.addSubTask(subTaskSecond);
         SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
-                "Test addNewSubTask description", Status.IN_PROGRESS, epicId, Instant.now(), 0);
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
         taskManager.addSubTask(subTaskThird);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
