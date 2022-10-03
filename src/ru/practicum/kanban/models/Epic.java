@@ -9,8 +9,8 @@ public class Epic extends Task {
     private final List<Integer> subTasksIds;
     private Instant endTime;
 
-    public Epic(TypeOfTask type, String name, String description, Status status, Instant startTime, long duration) {
-        super(type, name, description, status, startTime, duration);
+    public Epic(TypeOfTask type, String name, String description, Status status) {
+        super(type, name, description, status, Instant.ofEpochMilli(0), 0);
         subTasksIds = new ArrayList<>();
         endTime = Instant.ofEpochMilli(0);
     }
@@ -42,6 +42,10 @@ public class Epic extends Task {
 
     public void setEndTime(Instant endTime) {
         this.endTime = endTime;
+    }
+
+    public Instant getEndTime() {
+        return endTime;
     }
 
     @Override

@@ -26,11 +26,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
                 Instant.ofEpochMilli(1665388800000L), 10);
         fileBackedTasksManager.addTask(taskSecond);
 
-        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Новый эпик 1", "Описание первого эпика", Status.NEW,
-                Instant.ofEpochMilli(0), 0);
+        Epic epicFirst = new Epic(TypeOfTask.EPIC, "Новый эпик 1", "Описание первого эпика", Status.NEW);
         fileBackedTasksManager.addEpic(epicFirst);
-        Epic epicSecond = new Epic(TypeOfTask.EPIC, "Новый эпик 2", "Описание второго эпика", Status.NEW,
-                Instant.ofEpochMilli(0), 0);
+        Epic epicSecond = new Epic(TypeOfTask.EPIC, "Новый эпик 2", "Описание второго эпика", Status.NEW);
         fileBackedTasksManager.addEpic(epicSecond);
 
         SubTask subTaskShop = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 1", "Описание первого сабтаска",
@@ -122,10 +120,10 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         final int taskSecondId = fileBackedTasksManager.addTask(taskSecond).getId();
 
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
-                Status.NEW, Instant.now(), 0);
+                Status.NEW);
         final int epicFirstId = fileBackedTasksManager.addEpic(epicFirst).getId();
         Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
-                Status.NEW, Instant.now(), 0);
+                Status.NEW);
         final int epicSecondId = fileBackedTasksManager.addEpic(epicSecond).getId();
 
         fileBackedTasksManager.getTask(taskFirstId);
@@ -175,11 +173,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         fileBackedTasksManager.addTask(taskSecond);
 
         Epic epicFirst = new Epic(TypeOfTask.EPIC, "Test addNewEpic1", "Test addNewEpic description1",
-                Status.NEW, Instant.now(), 0);
+                Status.NEW);
         final int epicFirstId = fileBackedTasksManager.addEpic(epicFirst).getId();
-        Epic epicSecond = new Epic(TypeOfTask.EPIC, "Test addNewEpic2", "Test addNewEpic description2",
-                Status.NEW, Instant.now(), 0);
-        final int epicSecondId = fileBackedTasksManager.addEpic(epicSecond).getId();
 
         SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask1",
                 "Test addNewSubTask1 description", Status.IN_PROGRESS, epicFirstId, Instant.now(), 0);
@@ -193,7 +188,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         Map<Integer, Epic> tableEpics = fileBackedTasksManagerFromFile.tableEpics;
         Map<Integer, SubTask> tableSubTasks = fileBackedTasksManagerFromFile.tableSubTasks;
 
-        assertEquals(5, id, "Неверный id");
+        assertEquals(4, id, "Неверный id");
         assertEquals(fileBackedTasksManager.tableTasks, tableTasks, "Таблицы с тасками не соответствуют");
         assertEquals(fileBackedTasksManager.tableEpics, tableEpics, "Таблицы с эпиками не соответствуют");
         assertEquals(fileBackedTasksManager.tableSubTasks, tableSubTasks, "Таблицы с подзадачами не соответствуют");

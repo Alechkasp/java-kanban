@@ -1,7 +1,7 @@
 id,type,name,status,description,duration,startTime,epic
 1,TASK,Новая задача 1,NEW,Описание первой задачи,2,1665385200000
 2,TASK,Новая задача 2,NEW,Описание второй задачи,10,1665388800000
-3,EPIC,Test addNewEpic1,NEW,Test addNewEpic description1,0,1664732720125
-4,EPIC,Test addNewEpic2,NEW,Test addNewEpic description2,0,1664732720125
+3,EPIC,Test addNewEpic1,NEW,Test addNewEpic description1,0,0
+4,EPIC,Test addNewEpic2,NEW,Test addNewEpic description2,0,0
 
 4,3,2,1

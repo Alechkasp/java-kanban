@@ -159,9 +159,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static Epic fromStringEpic(String value) {
         String[] taskString = value.split(",");
         if (taskString[1].equals("EPIC")) {
-            Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], statusDetermination(value),
-                    Instant.ofEpochMilli(Long.parseLong(taskString[5])), Long.parseLong(taskString[6]));
+            Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], statusDetermination(value));
             epic.setId(Integer.parseInt(taskString[0]));
+            epic.setStartTime(Instant.ofEpochMilli(Long.parseLong(taskString[5])));
+            epic.setDuration(Long.parseLong(taskString[6]));
             return epic;
         }
         return null;
@@ -288,27 +289,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         //СОЗДАНИЕ
         Task task1 = new Task(TypeOfTask.TASK, "Новая задача 1", "Описание первой задачи", Status.NEW,
-                Instant.ofEpochMilli(1665385200000L), 2);
+                Instant.ofEpochMilli(1662016210000L), 2);
         fileBackedTasksManager.addTask(task1);
         Task task2 = new Task(TypeOfTask.TASK, "Новая задача 2", "Описание второй задачи", Status.NEW,
-                Instant.ofEpochMilli(1665388800000L), 10);
+                Instant.ofEpochMilli(1662019810000L), 10);
         fileBackedTasksManager.addTask(task2);
 
-        Epic epic3 = new Epic(TypeOfTask.EPIC, "Новый эпик 1", "Описание первого эпика", Status.NEW,
-                Instant.ofEpochMilli(0), 0);
+        Epic epic3 = new Epic(TypeOfTask.EPIC, "Новый эпик 1", "Описание первого эпика", Status.NEW);
         fileBackedTasksManager.addEpic(epic3);
-        Epic epic4 = new Epic(TypeOfTask.EPIC, "Новый эпик 2", "Описание второго эпика", Status.NEW,
-                Instant.ofEpochMilli(0), 0);
+        Epic epic4 = new Epic(TypeOfTask.EPIC, "Новый эпик 2", "Описание второго эпика", Status.NEW);
         fileBackedTasksManager.addEpic(epic4);
 
         SubTask subTaskShop = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 1", "Описание первого сабтаска",
-                Status.DONE, 3, Instant.ofEpochMilli(1665392400000L), 10);
+                Status.DONE, 3, Instant.ofEpochMilli(1662023410000L), 10);
         fileBackedTasksManager.addSubTask(subTaskShop);
         SubTask subTaskBuy = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 2", "Описание второго сабтаска",
-                Status.IN_PROGRESS, 3, Instant.ofEpochMilli(1665399600000L), 15);
+                Status.IN_PROGRESS, 3, Instant.ofEpochMilli(1662027010000L), 15);
         fileBackedTasksManager.addSubTask(subTaskBuy);
         SubTask subTaskCar = new SubTask(TypeOfTask.SUBTASK, "Новый сабтаск 3", "Описание третьего сабтаска",
-                Status.NEW, 4, Instant.ofEpochMilli(1665406800000L), 15);
+                Status.NEW, 4, Instant.ofEpochMilli(1664627100000L), 15);
         fileBackedTasksManager.addSubTask(subTaskCar);
 
         //ПОЛУЧЕНИЕ ПО ИДЕНТИФИКАТОРУ
@@ -346,6 +345,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("Последние просмотренные задачи: ");
         System.out.println(fileBackedTasksManager.getHistory());
         System.out.println("Размер списка: " + fileBackedTasksManager.getHistory().size());
+
+        //Отсортированные задачи
+        System.out.println("Отсортированные задачи: ");
+        System.out.println(fileBackedTasksManager.getPrioritizedTasksList());
 
         Path filePath = Path.of("resources/file.csv");
         loadFromFile(filePath);

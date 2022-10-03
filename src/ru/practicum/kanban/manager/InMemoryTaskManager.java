@@ -5,6 +5,7 @@ import ru.practicum.kanban.models.Status;
 import ru.practicum.kanban.models.SubTask;
 import ru.practicum.kanban.models.Task;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
@@ -206,9 +207,6 @@ public class InMemoryTaskManager implements TaskManager {
     private void updateEpicStatus(int epicId) {
         int countNew = 0;
         int countDone = 0;
-        long duration = 0;
-        Instant startTime = Instant.now();
-        Instant endTime = Instant.now();
 
         for (Integer subTask : tableSubTasks.keySet()) {
             if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
@@ -226,26 +224,34 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
 
-        for (Integer subTask : tableSubTasks.keySet()) {
-            if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
-                duration += tableSubTasks.get(subTask).getDuration();
-                //дата старта самой ранней подзадачи
-                if (tableSubTasks.get(subTask).getStartTime().isBefore(startTime)) {
-                    startTime = tableSubTasks.get(subTask).getStartTime();
-                }
-                //дата окончания самой поздней из задач
-                if (tableSubTasks.get(subTask).getEndTime().isAfter(endTime)) {
-                    endTime = tableSubTasks.get(subTask).getEndTime();
+        if (!getEpicForSubTask(epicId).getSubTasks().isEmpty()) {
+            Instant startTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
+            Instant endTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
+
+            for (Integer subTask : tableSubTasks.keySet()) {
+                if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
+                    //дата старта самой ранней подзадачи
+                    if (tableSubTasks.get(subTask).getStartTime().isBefore(startTime)) {
+                        startTime = tableSubTasks.get(subTask).getStartTime();
+                    }
+                    //дата окончания самой поздней из задач
+                    if (tableSubTasks.get(subTask).getEndTime().isAfter(endTime)) {
+                        endTime = tableSubTasks.get(subTask).getEndTime();
+                    }
                 }
             }
+
+            //дата старта эпика
+            getEpicForSubTask(epicId).setStartTime(startTime);
+            //дата конца эпика
+            getEpicForSubTask(epicId).setEndTime(endTime);
+            //продолжительность эпика
+            getEpicForSubTask(epicId).setDuration(Duration.between(startTime, endTime).toMinutes());
+        } else {
+            getEpicForSubTask(epicId).setDuration(0);
+            getEpicForSubTask(epicId).setStartTime(Instant.ofEpochMilli(0));
         }
 
-        //дата старта эпика
-        getEpicForSubTask(epicId).setStartTime(startTime);
-        //дата окончания эпика
-        getEpicForSubTask(epicId).setEndTime(endTime);
-        //продолжительность эпика
-        getEpicForSubTask(epicId).setDuration(duration);
 
         //если у эпика нет подзадач
         boolean withoutSubTask = getEpicForSubTask(epicId).getSubTasks().isEmpty();
@@ -256,9 +262,6 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (withoutSubTask) {
             getEpicForSubTask(epicId).setStatus(Status.NEW);
-            getEpicForSubTask(epicId).setDuration(0);
-            getEpicForSubTask(epicId).setStartTime(Instant.ofEpochMilli(0));
-            getEpicForSubTask(epicId).setEndTime(Instant.ofEpochMilli(0));
         } else if (withSubTaskStatusNew) {
             getEpicForSubTask(epicId).setStatus(Status.NEW);
         } else if (withSubTaskStatusDone) {
@@ -283,18 +286,22 @@ public class InMemoryTaskManager implements TaskManager {
         prioritizedTasks.remove(task);
     }
 
+    public Set<Task> getPrioritizedTasksList() {
+        return prioritizedTasks;
+    }
+
     public void checkTasks() {
         List<Task> priorTasks = new ArrayList<>(prioritizedTasks);
 
-        for (int i = 1; i < priorTasks.size() - 1; i++) {
-            Task prevTask = priorTasks.get(i-1);
-            Task curTask = priorTasks.get(i);
-            Task nextTask = priorTasks.get(i + 1);
+        if (priorTasks.size() > 3) {
+            Task prevTask = priorTasks.get(priorTasks.size() - 3);
+            Task curTask = priorTasks.get(priorTasks.size() - 2);
+            Task nextTask = priorTasks.get(priorTasks.size() - 1);
 
             boolean checkStartTime = curTask.getStartTime().isBefore(prevTask.getEndTime());
             boolean checkEndTime = curTask.getEndTime().isAfter(nextTask.getStartTime());
 
-            if (checkStartTime ) {
+            if (checkStartTime) {
                 throw new ManagerCheckException("Задача пересекается с предыдущей");
             }
 
