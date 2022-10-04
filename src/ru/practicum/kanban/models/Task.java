@@ -11,7 +11,7 @@ public class Task {
     private Status status;
     private Instant startTime;
     private long duration;
-    private final long SECONDS_IN_MINUTE = 60;
+    private static final long SECONDS_IN_MINUTE = 60;
 
     public Task(TypeOfTask type, String name, String description, Status status, Instant startTime, long duration) {
         this.type = type;

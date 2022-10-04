@@ -308,10 +308,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         final List<SubTask> savedSubTasks = taskManager.getEpicSubTasks(epicFirstId);
 
-        final List<SubTask> subTasks = new ArrayList<>();
-        for (SubTask s : taskManager.getSubTasks()) {
-            subTasks.add(s);
-        }
+        final List<SubTask> subTasks = new ArrayList<>(taskManager.getSubTasks());
 
         assertNotNull(subTasks, "Задачи нe возвращаются.");
         assertEquals(1, epicFirstId, "Неверный id эпика");

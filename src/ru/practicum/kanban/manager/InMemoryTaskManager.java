@@ -15,8 +15,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Epic> tableEpics = new HashMap<>();
     protected Map<Integer, SubTask> tableSubTasks = new HashMap<>();
     protected HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
-    protected Comparator<Task> startTimeComparator = Comparator.comparing(Task::getStartTime);
-    protected Set<Task> prioritizedTasks = new TreeSet<>(startTimeComparator);
+    protected Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     //добавить задачу типа Task
     @Override
