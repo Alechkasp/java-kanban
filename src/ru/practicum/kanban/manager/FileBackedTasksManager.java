@@ -71,7 +71,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     //метод восстановления данных менеджера из файла при запуске программы
-    static FileBackedTasksManager loadFromFile(Path path) {
+    public static FileBackedTasksManager loadFromFile(Path path) {
         int id = 0;
         Map<Integer, Task> tableTasks = new HashMap<>();
         Map<Integer, Epic> tableEpics = new HashMap<>();
@@ -129,9 +129,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     }
                 }
 
-                System.out.println(tableTasks);
                 System.out.println(tableEpics);
                 System.out.println(tableSubTasks);
+                //System.out.println("список сабтасков " + tableEpics.get(3).getSubTasks());
 
                 System.out.println(historyFromString(rows[rows.length - 1]));
             }
@@ -285,11 +285,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
+/*        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
 
         //СОЗДАНИЕ
         Task task1 = new Task(TypeOfTask.TASK, "Новая задача 1", "Описание первой задачи", Status.NEW,
-                Instant.ofEpochMilli(1662016210000L), 2);
+                 Instant.ofEpochMilli(1662016210000L), 2);
         fileBackedTasksManager.addTask(task1);
         Task task2 = new Task(TypeOfTask.TASK, "Новая задача 2", "Описание второй задачи", Status.NEW,
                 Instant.ofEpochMilli(1662019810000L), 10);
@@ -338,7 +338,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("Размер списка: " + fileBackedTasksManager.getHistory().size());
 
         //УДАЛЕНИЕ ПО ИДЕНТИФИКАТОРУ
-        fileBackedTasksManager.delTask(2);
+        //fileBackedTasksManager.delTask(2);
         fileBackedTasksManager.delEpic(4);
 
         //Получить список последних просмотренных задач
@@ -348,7 +348,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         //Отсортированные задачи
         System.out.println("Отсортированные задачи: ");
-        System.out.println(fileBackedTasksManager.getPrioritizedTasksList());
+        System.out.println(fileBackedTasksManager.getPrioritizedTasksList());*/
 
         Path filePath = Path.of("resources/file.csv");
         loadFromFile(filePath);
