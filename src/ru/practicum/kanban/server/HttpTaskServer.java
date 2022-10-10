@@ -13,7 +13,7 @@ public class HttpTaskServer {
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         JsonTaskManager jsonTaskManager = new JsonTaskManager(taskManager);
         server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-        server.createContext("/tasks/task", jsonTaskManager::getTasks);
+        server.createContext("/tasks/", jsonTaskManager::getTasks);
         server.createContext("/tasks/epic", jsonTaskManager::getEpics);
         server.createContext("/tasks/subtask", jsonTaskManager::getSubTasks);
     }

@@ -7,7 +7,7 @@ import java.util.List;
 public class Epic extends Task {
 
     private final List<Integer> subTasksIds;
-    private Instant endTime;
+    private transient Instant endTime;
 
     public Epic(TypeOfTask type, String name, String description, Status status) {
         super(type, name, description, status, Instant.ofEpochMilli(0), 0);

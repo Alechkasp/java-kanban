@@ -91,6 +91,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
                 if (s[1].equals("SUBTASK")) {
                     tableSubTasks.put(fromStringSubTask(rows[i]).getId(), fromStringSubTask(rows[i]));
+                    tableEpics.get(fromStringSubTask(rows[i]).getEpicId())
+                            .addSubTaskToEpic(fromStringSubTask(rows[i]).getId());
                 }
             }
 
@@ -129,9 +131,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     }
                 }
 
+                for (Epic epic : tableEpics.values()) {
+                    if (!epic.getSubTasks().isEmpty()) {
+                        Instant endTime = tableSubTasks.get(epic.getSubTasks().get(0)).getStartTime();
+
+                        for (Integer subTask : tableSubTasks.keySet()) {
+                            if (epic.getSubTasks().contains(subTask)) {
+                                //дата окончания самой поздней из задач
+                                if (tableSubTasks.get(subTask).getEndTime().isAfter(endTime)) {
+                                    endTime = tableSubTasks.get(subTask).getEndTime();
+                                }
+                            }
+                        }
+                        epic.setEndTime(endTime);
+                    }
+                }
+
+
+                System.out.println(tableTasks);
                 System.out.println(tableEpics);
                 System.out.println(tableSubTasks);
-                //System.out.println("список сабтасков " + tableEpics.get(3).getSubTasks());
 
                 System.out.println(historyFromString(rows[rows.length - 1]));
             }
@@ -148,7 +167,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] taskString = value.split(",");
         if (taskString[1].equals("TASK")) {
             Task task = new Task(TypeOfTask.TASK, taskString[2], taskString[4], statusDetermination(value),
-                    Instant.ofEpochMilli(Long.parseLong(taskString[5])), Long.parseLong(taskString[6]));
+                    Instant.ofEpochMilli(Long.parseLong(taskString[6])), Long.parseLong(taskString[5]));
             task.setId(Integer.parseInt(taskString[0]));
             return task;
         }
@@ -161,8 +180,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         if (taskString[1].equals("EPIC")) {
             Epic epic = new Epic(TypeOfTask.EPIC, taskString[2], taskString[4], statusDetermination(value));
             epic.setId(Integer.parseInt(taskString[0]));
-            epic.setStartTime(Instant.ofEpochMilli(Long.parseLong(taskString[5])));
-            epic.setDuration(Long.parseLong(taskString[6]));
+            epic.setStartTime(Instant.ofEpochMilli(Long.parseLong(taskString[6])));
+            epic.setDuration(Long.parseLong(taskString[5]));
             return epic;
         }
         return null;
@@ -173,8 +192,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] taskString = value.split(",");
         if (taskString[1].equals("SUBTASK")) {
             SubTask subTask = new SubTask(TypeOfTask.SUBTASK, taskString[2], taskString[4], statusDetermination(value),
-                    Integer.parseInt(taskString[5]), Instant.ofEpochMilli(Long.parseLong(taskString[6])),
-                    Long.parseLong(taskString[7]));
+                    Integer.parseInt(taskString[7]), Instant.ofEpochMilli(Long.parseLong(taskString[6])),
+                    Long.parseLong(taskString[5]));
             subTask.setId(Integer.parseInt(taskString[0]));
             return subTask;
         }
@@ -285,7 +304,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
-/*        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
 
         //СОЗДАНИЕ
         Task task1 = new Task(TypeOfTask.TASK, "Новая задача 1", "Описание первой задачи", Status.NEW,
@@ -348,7 +367,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         //Отсортированные задачи
         System.out.println("Отсортированные задачи: ");
-        System.out.println(fileBackedTasksManager.getPrioritizedTasksList());*/
+        System.out.println(fileBackedTasksManager.getPrioritizedTasksList());
 
         Path filePath = Path.of("resources/file.csv");
         loadFromFile(filePath);
