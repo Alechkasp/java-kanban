@@ -5,11 +5,11 @@ public class Managers {
         return new InMemoryTaskManager();
     }
 
-    public FileBackedTasksManager getDefaultFileBackedTasksManager() {
+    public static FileBackedTasksManager getDefaultFileBackedTasksManager() {
         return new FileBackedTasksManager();
     }
 
-    public  HTTPTaskManager getDefaultHTTPTaskManager() {
+    public static HTTPTaskManager getDefaultHTTPTaskManager() {
         return new HTTPTaskManager("http://localhost:8079");
     }
 

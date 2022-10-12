@@ -11,7 +11,6 @@ import ru.practicum.kanban.server.StartTimeAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 
@@ -28,17 +27,14 @@ public class HTTPTaskManager extends FileBackedTasksManager {
 
     public void getApiToken() throws IOException, InterruptedException {
         kvTaskClient = new KVTaskClient(urlStorage);
-        System.out.println("url " + urlStorage);
         kvTaskClient.register();
     }
 
     public void save() throws IOException, InterruptedException {
-        Managers managers = new Managers();
-        FileBackedTasksManager fileBackedTasksManager = managers.getDefaultFileBackedTasksManager()
-                .loadFromFile((Path.of("resources/file.csv")));
-        kvTaskClient.put("/tasks/task", gson.toJson(fileBackedTasksManager.getTasks()));
-        kvTaskClient.put("/tasks/epic", gson.toJson(fileBackedTasksManager.getEpics()));
-        kvTaskClient.put("/tasks/subtask", gson.toJson(fileBackedTasksManager.getSubTasks()));
+        kvTaskClient.put("/tasks/task", gson.toJson(getTasks()));
+        kvTaskClient.put("/tasks/epic", gson.toJson(getEpics()));
+        kvTaskClient.put("/tasks/subtask", gson.toJson(getSubTasks()));
+        kvTaskClient.put("/tasks/history", gson.toJson(inMemoryHistoryManager.getHistory()));
     }
 
     public void load() throws IOException, InterruptedException {
@@ -66,9 +62,18 @@ public class HTTPTaskManager extends FileBackedTasksManager {
             addSubtaskFromKVServer(subTask);
         }
 
+        String gsonStringHistory = kvTaskClient.load("/tasks/history");
+        Type typeHistory = new TypeToken<List<Task>>(){}.getType();
+        List<Task> history = gson.fromJson(gsonStringHistory, typeHistory);
+
+        for (Task task : history) {
+            inMemoryHistoryManager.add(task);
+        }
+
         System.out.println("tasks " + subTasks);
         System.out.println("epics " + epics);
         System.out.println("subtasks " + subTasks);
+        System.out.println("history " + history);
     }
 
     public Task addTaskFromKVServer(Task task) throws IOException, InterruptedException {

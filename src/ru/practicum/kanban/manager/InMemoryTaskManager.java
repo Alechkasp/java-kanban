@@ -223,11 +223,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (!getEpicForSubTask(epicId).getSubTasks().isEmpty()) {
-/*          Instant startTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
-            Instant endTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();*/
+            Instant startTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
+            Instant endTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
 
-            Instant startTime = Instant.MAX;
-            Instant endTime = Instant.MIN;
+            //Instant startTime = Instant.MAX;
+            //Instant endTime = Instant.MIN;
 
             for (Integer subTask : tableSubTasks.keySet()) {
                 if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
