@@ -5,6 +5,7 @@ import ru.practicum.kanban.models.*;
 
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +17,165 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     private static final Path path = Path.of("resources/programResults.csv");
     private final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
+
+    @Test
+    void addNewEpic() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description", Status.NEW);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertNotNull(savedEpic, "Задача не найдена.");
+        assertEquals(epic, savedEpic, "Задачи не совпадают.");
+
+        final List<Epic> epics = fileBackedTasksManager.getEpics();
+
+        assertNotNull(epics, "Задачи нe возвращаются.");
+        assertEquals(1, epics.size(), "Неверное количество задач.");
+        assertEquals(epic, epics.get(0), "Задачи не совпадают.");
+    }
+
+    @Test
+    void shouldUpdateEpicStatusWith0SubTasks() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.IN_PROGRESS);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertEquals(epic.getStatus(), savedEpic.getStatus(), "Статусы не совпадают.");
+    }
+
+    @Test
+    void shouldUpdateEpicStatusWith3SubTasksWithStatusNEW() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.IN_PROGRESS);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
+        fileBackedTasksManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
+        fileBackedTasksManager.addSubTask(subTaskSecond);
+        SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
+        fileBackedTasksManager.addSubTask(subTaskThird);
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertEquals(savedEpic.getStatus(), Status.NEW, "Статусы не совпадают.");
+    }
+
+    @Test
+    void shouldUpdateEpicStatusWith3SubTasksWithStatusDONE() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.IN_PROGRESS);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
+        fileBackedTasksManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
+        fileBackedTasksManager.addSubTask(subTaskSecond);
+        SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
+        fileBackedTasksManager.addSubTask(subTaskThird);
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertEquals(savedEpic.getStatus(), Status.DONE, "Статусы не совпадают.");
+    }
+
+    @Test
+    void shouldUpdateEpicStatusWith3SubTasksWithStatusNEWandDONE() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.NEW);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
+        fileBackedTasksManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.NEW, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
+        fileBackedTasksManager.addSubTask(subTaskSecond);
+        SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.DONE, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
+        fileBackedTasksManager.addSubTask(subTaskThird);
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertEquals(savedEpic.getStatus(), Status.IN_PROGRESS, "Статусы не совпадают.");
+    }
+
+    @Test
+    void shouldUpdateEpicStatusWith3SubTasksWithStatusIN_PROGRESS() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.NEW);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
+        fileBackedTasksManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
+        fileBackedTasksManager.addSubTask(subTaskSecond);
+        SubTask subTaskThird = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662027010000L), 5);
+        fileBackedTasksManager.addSubTask(subTaskThird);
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertEquals(epic.getStatus(), savedEpic.getStatus(), "Статусы не совпадают.");
+    }
+
+    @Test
+    void shouldCalculateTimeWithSubTasks() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.NEW);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        SubTask subTaskFirst = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662023410000L), 10);
+        fileBackedTasksManager.addSubTask(subTaskFirst);
+        SubTask subTaskSecond = new SubTask(TypeOfTask.SUBTASK, "Test addNewSubTask",
+                "Test addNewSubTask description", Status.IN_PROGRESS, epicId,
+                Instant.ofEpochMilli(1662027010000L), 15);
+        fileBackedTasksManager.addSubTask(subTaskSecond);
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertEquals(savedEpic.getStartTime(), subTaskFirst.getStartTime(), "Время начала эпика неверное.");
+        assertEquals(savedEpic.getEndTime(), subTaskSecond.getEndTime(), "Время конца эпика неверное.");
+        assertEquals(savedEpic.getDuration(), 75, "Продолжительность эпика неверная.");
+    }
+
+    @Test
+    void shouldCalculateTimeWithoutSubTasks() {
+        Epic epic = new Epic(TypeOfTask.EPIC, "Test addNewEpic", "Test addNewEpic description",
+                Status.NEW);
+        final int epicId = fileBackedTasksManager.addEpic(epic).getId();
+
+        final Epic savedEpic = fileBackedTasksManager.getEpic(epicId);
+
+        assertEquals(savedEpic.getStartTime(), Instant.ofEpochMilli(0), "Время начала эпика неверное.");
+        assertEquals(savedEpic.getEndTime(), Instant.ofEpochMilli(0), "Время конца эпика неверное.");
+        assertEquals(savedEpic.getDuration(), 0, "Продолжительность эпика неверная.");
+    }
 
     @Test
     public void shouldSaveAndLoadNormal() {
@@ -57,7 +217,9 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         fileBackedTasksManager.save(path);
 
-        FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+       // FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+        FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
+
         int id = fileBackedTasksManagerFromFile.id;
         Map<Integer, Task> tableTasks = fileBackedTasksManagerFromFile.tableTasks;
         Map<Integer, Epic> tableEpics = fileBackedTasksManagerFromFile.tableEpics;
@@ -97,7 +259,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     public void shouldSaveAndLoadWithoutTasks() {
         fileBackedTasksManager.save(path);
 
-        FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+        //FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+        FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
 
         assertEquals(0, fileBackedTasksManager.getTasks().size(), "Список задач не пустой");
         assertEquals(0, fileBackedTasksManager.getEpics().size(), "Список эпиков не пустой");
@@ -136,7 +299,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         fileBackedTasksManager.save(path);
 
-        FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+        //FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+        FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
         int id = fileBackedTasksManagerFromFile.id;
         Map<Integer, Task> tableTasks = fileBackedTasksManagerFromFile.tableTasks;
         Map<Integer, Epic> tableEpics = fileBackedTasksManagerFromFile.tableEpics;
@@ -182,7 +346,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         fileBackedTasksManager.save(path);
 
-        FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+        //FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
+        FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
         int id = fileBackedTasksManagerFromFile.id;
         Map<Integer, Task> tableTasks = fileBackedTasksManagerFromFile.tableTasks;
         Map<Integer, Epic> tableEpics = fileBackedTasksManagerFromFile.tableEpics;

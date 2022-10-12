@@ -11,7 +11,7 @@ public class StartTimeAdapter extends TypeAdapter<Instant> {
 
     @Override
     public void write(final JsonWriter jsonWriter, final Instant instant) throws IOException {
-        jsonWriter.value(instant.toString());
+        jsonWriter.value(instant.toEpochMilli());
     }
 
     @Override

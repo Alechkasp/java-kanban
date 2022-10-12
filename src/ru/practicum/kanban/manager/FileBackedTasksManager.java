@@ -71,7 +71,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     //метод восстановления данных менеджера из файла при запуске программы
-    public static FileBackedTasksManager loadFromFile(Path path) {
+    public FileBackedTasksManager loadFromFile(Path path) {
         int id = 0;
         Map<Integer, Task> tableTasks = new HashMap<>();
         Map<Integer, Epic> tableEpics = new HashMap<>();
@@ -369,7 +369,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("Отсортированные задачи: ");
         System.out.println(fileBackedTasksManager.getPrioritizedTasksList());
 
-        Path filePath = Path.of("resources/file.csv");
-        loadFromFile(filePath);
+        //Path filePath = Path.of("resources/file.csv");
+        //loadFromFile(filePath);
+        fileBackedTasksManager.loadFromFile(path);
     }
 }

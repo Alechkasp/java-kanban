@@ -1,15 +1,17 @@
 package ru.practicum.kanban.manager;
 
-import java.io.IOException;
-
 public class Managers {
-    public TaskManager getDefault() {
+    public TaskManager getDefaultInMemoryTaskManager() {
         return new InMemoryTaskManager();
     }
 
-/*    public TaskManager getDefault() throws IOException, InterruptedException {
-        return new HTTPTaskManager("http://localhost:8079/");
-    }*/
+    public FileBackedTasksManager getDefaultFileBackedTasksManager() {
+        return new FileBackedTasksManager();
+    }
+
+    public  HTTPTaskManager getDefaultHTTPTaskManager() {
+        return new HTTPTaskManager("http://localhost:8079");
+    }
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();

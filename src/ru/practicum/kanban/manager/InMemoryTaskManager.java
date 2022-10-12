@@ -202,7 +202,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subTaskFromEpic;
     }
 
-    private void updateEpicStatus(int epicId) {
+    public void updateEpicStatus(int epicId) {
         int countNew = 0;
         int countDone = 0;
 
@@ -223,8 +223,11 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         if (!getEpicForSubTask(epicId).getSubTasks().isEmpty()) {
-            Instant startTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
-            Instant endTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
+/*          Instant startTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
+            Instant endTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();*/
+
+            Instant startTime = Instant.MAX;
+            Instant endTime = Instant.MIN;
 
             for (Integer subTask : tableSubTasks.keySet()) {
                 if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
