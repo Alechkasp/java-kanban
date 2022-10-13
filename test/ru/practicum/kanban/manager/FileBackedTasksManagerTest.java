@@ -217,7 +217,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         fileBackedTasksManager.save(path);
 
-       // FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
 
         int id = fileBackedTasksManagerFromFile.id;
@@ -259,7 +258,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
     public void shouldSaveAndLoadWithoutTasks() {
         fileBackedTasksManager.save(path);
 
-        //FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
 
         assertEquals(0, fileBackedTasksManager.getTasks().size(), "Список задач не пустой");
@@ -299,7 +297,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         fileBackedTasksManager.save(path);
 
-        //FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
         int id = fileBackedTasksManagerFromFile.id;
         Map<Integer, Task> tableTasks = fileBackedTasksManagerFromFile.tableTasks;
@@ -346,7 +343,6 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
         fileBackedTasksManager.save(path);
 
-        //FileBackedTasksManager fileBackedTasksManagerFromFile = FileBackedTasksManager.loadFromFile(path);
         FileBackedTasksManager fileBackedTasksManagerFromFile = fileBackedTasksManager.loadFromFile(path);
         int id = fileBackedTasksManagerFromFile.id;
         Map<Integer, Task> tableTasks = fileBackedTasksManagerFromFile.tableTasks;

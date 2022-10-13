@@ -15,7 +15,7 @@ import java.time.Instant;
 import java.util.List;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
-    private String urlStorage;
+    private final String urlStorage;
     private KVTaskClient kvTaskClient;
 
     private final Gson gson = new GsonBuilder().
@@ -39,8 +39,7 @@ public class HTTPTaskManager extends FileBackedTasksManager {
 
     public void load() throws IOException, InterruptedException {
         String gsonStringTask = kvTaskClient.load("/tasks/task");
-        Type type = new TypeToken<List<Task>>() {
-        }.getType();
+        Type type = new TypeToken<List<Task>>() {}.getType();
         List<Task> tasks = gson.fromJson(gsonStringTask, type);
 
         for (Task task : tasks) {
@@ -75,24 +74,22 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         }
     }
 
-    public Task addTaskFromKVServer(Task task) throws IOException, InterruptedException {
+    public void addTaskFromKVServer(Task task) throws IOException, InterruptedException {
         id++;
         task.setId(id);
         addToPrioritizedTasksList(task);
         tableTasks.put(id, task);
         save();
-        return task;
     }
 
-    public Epic addEpicFromKVServer(Epic epic) throws IOException, InterruptedException {
+    public void addEpicFromKVServer(Epic epic) throws IOException, InterruptedException {
         id++;
         epic.setId(id);
         tableEpics.put(id, epic);
         save();
-        return epic;
     }
 
-    public SubTask addSubtaskFromKVServer(SubTask subTask) throws IOException, InterruptedException {
+    public void addSubtaskFromKVServer(SubTask subTask) throws IOException, InterruptedException {
         id++;
         subTask.setId(id);
         addToPrioritizedTasksList(subTask);
@@ -100,7 +97,6 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         getEpicForSubTask(subTask.getEpicId()).addSubTaskToEpic(id);
         updateEpicStatus(subTask.getEpicId());
         save();
-        return subTask;
     }
 
     @Override

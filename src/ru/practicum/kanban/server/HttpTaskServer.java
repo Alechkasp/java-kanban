@@ -189,6 +189,10 @@ public class HttpTaskServer {
         server.start();
     }
 
+    public void stop() {
+        server.stop(1);
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
 
         HTTPTaskManager httpTaskManager = Managers.getDefaultHTTPTaskManager();
