@@ -369,8 +369,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("Отсортированные задачи: ");
         System.out.println(fileBackedTasksManager.getPrioritizedTasksList());
 
-        //Path filePath = Path.of("resources/file.csv");
-        //loadFromFile(filePath);
         fileBackedTasksManager.loadFromFile(path);
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
     private String urlStorage;
-    private KVTaskClient kvTaskClient ;
+    private KVTaskClient kvTaskClient;
 
     private final Gson gson = new GsonBuilder().
             registerTypeAdapter(Instant.class, new StartTimeAdapter()).create();
@@ -39,7 +39,8 @@ public class HTTPTaskManager extends FileBackedTasksManager {
 
     public void load() throws IOException, InterruptedException {
         String gsonStringTask = kvTaskClient.load("/tasks/task");
-        Type type = new TypeToken<List<Task>>(){}.getType();
+        Type type = new TypeToken<List<Task>>() {
+        }.getType();
         List<Task> tasks = gson.fromJson(gsonStringTask, type);
 
         for (Task task : tasks) {
@@ -47,7 +48,8 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         }
 
         String gsonStringEpic = kvTaskClient.load("/tasks/epic");
-        type = new TypeToken<List<Epic>>(){}.getType();
+        type = new TypeToken<List<Epic>>() {
+        }.getType();
         List<Epic> epics = gson.fromJson(gsonStringEpic, type);
 
         for (Epic epic : epics) {
@@ -55,7 +57,8 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         }
 
         String gsonStringSubTask = kvTaskClient.load("/tasks/subtask");
-        type = new TypeToken<List<SubTask>>(){}.getType();
+        type = new TypeToken<List<SubTask>>() {
+        }.getType();
         List<SubTask> subTasks = gson.fromJson(gsonStringSubTask, type);
 
         for (SubTask subTask : subTasks) {
@@ -63,17 +66,13 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         }
 
         String gsonStringHistory = kvTaskClient.load("/tasks/history");
-        Type typeHistory = new TypeToken<List<Task>>(){}.getType();
+        Type typeHistory = new TypeToken<List<Task>>() {
+        }.getType();
         List<Task> history = gson.fromJson(gsonStringHistory, typeHistory);
 
         for (Task task : history) {
             inMemoryHistoryManager.add(task);
         }
-
-        System.out.println("tasks " + subTasks);
-        System.out.println("epics " + epics);
-        System.out.println("subtasks " + subTasks);
-        System.out.println("history " + history);
     }
 
     public Task addTaskFromKVServer(Task task) throws IOException, InterruptedException {
@@ -132,5 +131,65 @@ public class HTTPTaskManager extends FileBackedTasksManager {
             throw new RuntimeException(e);
         }
         return super.addSubTask(subTask);
+    }
+
+    @Override
+    public void updateTask(Task task) {
+        try {
+            save();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        super.updateTask(task);
+    }
+
+    @Override
+    public void updateEpic(Epic epic) {
+        try {
+            save();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        super.updateEpic(epic);
+    }
+
+    @Override
+    public void updateSubTask(SubTask subTask) {
+        try {
+            save();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        super.updateSubTask(subTask);
+    }
+
+    @Override
+    public void delTask(int id) {
+        try {
+            save();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        super.delTask(id);
+    }
+
+    @Override
+    public void delEpic(int id) {
+        try {
+            save();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        super.delEpic(id);
+    }
+
+    @Override
+    public void delSubTask(int id) {
+        try {
+            save();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        super.delSubTask(id);
     }
 }

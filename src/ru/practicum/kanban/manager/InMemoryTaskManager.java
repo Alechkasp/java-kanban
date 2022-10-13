@@ -226,9 +226,6 @@ public class InMemoryTaskManager implements TaskManager {
             Instant startTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
             Instant endTime = tableSubTasks.get(getEpicForSubTask(epicId).getSubTasks().get(0)).getStartTime();
 
-            //Instant startTime = Instant.MAX;
-            //Instant endTime = Instant.MIN;
-
             for (Integer subTask : tableSubTasks.keySet()) {
                 if (getEpicForSubTask(epicId).getSubTasks().contains(subTask)) {
                     //дата старта самой ранней подзадачи
@@ -295,14 +292,14 @@ public class InMemoryTaskManager implements TaskManager {
         List<Task> priorTasks = new ArrayList<>(prioritizedTasks);
 
         for (int i = 1; i < priorTasks.size() - 1; i++) {
-            Task prevTask = priorTasks.get(i-1);
+            Task prevTask = priorTasks.get(i - 1);
             Task curTask = priorTasks.get(i);
             Task nextTask = priorTasks.get(i + 1);
 
             boolean checkStartTime = curTask.getStartTime().isBefore(prevTask.getEndTime());
             boolean checkEndTime = curTask.getEndTime().isAfter(nextTask.getStartTime());
 
-            if (checkStartTime ) {
+            if (checkStartTime) {
                 throw new ManagerCheckException("Задача пересекается с предыдущей");
             }
 

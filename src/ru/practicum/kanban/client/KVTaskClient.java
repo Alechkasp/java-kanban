@@ -28,7 +28,7 @@ public class KVTaskClient {
     }
 
     public void put(String key, String json) throws IOException, InterruptedException {
-        URI urlSave = URI.create(this.url+ "/save" + key + "?API_TOKEN=" + API_TOKEN);
+        URI urlSave = URI.create(this.url + "/save" + key + "?API_TOKEN=" + API_TOKEN);
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -39,7 +39,7 @@ public class KVTaskClient {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Ключ добавлен! " + response);
-        System.out.println("json: " + json);
+        System.out.println("ключ: " + key);
     }
 
     public String load(String key) throws IOException, InterruptedException {
@@ -53,7 +53,6 @@ public class KVTaskClient {
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
         return response.body();
     }
 }
