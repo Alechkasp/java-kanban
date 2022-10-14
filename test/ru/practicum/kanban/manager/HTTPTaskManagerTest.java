@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.kanban.models.*;
+import ru.practicum.kanban.server.HttpStatusCode;
 import ru.practicum.kanban.server.HttpTaskServer;
 import ru.practicum.kanban.server.KVServer;
 import ru.practicum.kanban.server.StartTimeAdapter;
@@ -88,7 +89,7 @@ public class HTTPTaskManagerTest {
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(task))).build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpStatusCode.CREATED.getValue(), response.statusCode());
 
         assertEquals(3, httpTaskManager.getTasks().size(), "Размер списка неверный");
     }
@@ -101,7 +102,7 @@ public class HTTPTaskManagerTest {
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(epic))).build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpStatusCode.CREATED.getValue(), response.statusCode());
 
         assertEquals(3, httpTaskManager.getEpics().size(), "Размер списка неверный");
     }
@@ -115,7 +116,7 @@ public class HTTPTaskManagerTest {
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(subTask))).build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpStatusCode.CREATED.getValue(), response.statusCode());
 
         assertEquals(4, httpTaskManager.getSubTasks().size(), "Размер списка неверный");
         assertEquals(epicTwo.getStatus(), Status.IN_PROGRESS);
@@ -129,7 +130,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/task/?id=1");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         Type taskType = new TypeToken<Task>() {
         }.getType();
@@ -145,7 +146,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/epic/?id=3");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         Type epicType = new TypeToken<Epic>() {
         }.getType();
@@ -161,7 +162,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/subtask/?id=5");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         Type subTaskType = new TypeToken<SubTask>() {
         }.getType();
@@ -177,7 +178,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/task");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         Type taskType = new TypeToken<List<Task>>() {
         }.getType();
@@ -193,7 +194,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/epic");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         Type epicType = new TypeToken<List<Epic>>() {
         }.getType();
@@ -209,7 +210,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/subtask");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         Type subTaskType = new TypeToken<List<SubTask>>() {
         }.getType();
@@ -225,7 +226,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/task/?id=1");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).DELETE().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         assertEquals(httpTaskManager.getTasks().size(), 1);
     }
@@ -236,7 +237,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/epic/?id=3");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).DELETE().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         assertEquals(httpTaskManager.getEpics().size(), 1);
     }
@@ -247,7 +248,7 @@ public class HTTPTaskManagerTest {
         URI uri = URI.create("http://localhost:8080/tasks/subtask/?id=5");
         HttpRequest httpRequest = HttpRequest.newBuilder().uri(uri).DELETE().build();
         HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpStatusCode.OK.getValue(), response.statusCode());
 
         assertEquals(httpTaskManager.getSubTasks().size(), 2);
     }

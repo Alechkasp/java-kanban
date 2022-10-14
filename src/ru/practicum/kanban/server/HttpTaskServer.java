@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.regex.Pattern;
 
@@ -16,8 +15,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import ru.practicum.kanban.manager.FileBackedTasksManager;
-import ru.practicum.kanban.manager.HTTPTaskManager;
-import ru.practicum.kanban.manager.Managers;
 import ru.practicum.kanban.models.Epic;
 import ru.practicum.kanban.models.SubTask;
 import ru.practicum.kanban.models.Task;
@@ -41,7 +38,7 @@ public class HttpTaskServer {
         public void handle(HttpExchange httpExchange) throws IOException {
             System.out.println("Началась обработка /tasks запроса от клиента");
             String response = "";
-            int statusCode = 404;
+            HttpStatusCode httpStatusCode = HttpStatusCode.NOT_FOUND;
             String method = httpExchange.getRequestMethod();
             String path = httpExchange.getRequestURI().getPath();
             String query = httpExchange.getRequestURI().getRawQuery();
@@ -50,46 +47,46 @@ public class HttpTaskServer {
                 case "GET":
                     //getTasks
                     if (Pattern.matches("^/tasks/task$", path)) {
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getTasks());
                     }
 
                     //getEpics
                     if (Pattern.matches("^/tasks/epic$", path)) {
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getEpics());
                     }
 
                     //getSubTasks
                     if (Pattern.matches("^/tasks/subtask$", path)) {
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getSubTasks());
                     }
 
                     //getTask(id)
                     if (Pattern.matches("^/tasks/task/$", path) && (query != null)) {
                         int id = Integer.parseInt(query.split("=")[1]);
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getTask(id));
                     }
 
                     //getEpic(id)
                     if (Pattern.matches("^/tasks/epic/", path) && (query != null)) {
                         int id = Integer.parseInt(query.split("=")[1]);
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getEpic(id));
                     }
 
                     //getSubTask(id)
                     if (Pattern.matches("^/tasks/subtask/", path) && (query != null)) {
                         int id = Integer.parseInt(query.split("=")[1]);
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getSubTask(id));
                     }
 
                     //getTasks + getEpics + getSubTasks
                     if (Pattern.matches("^/tasks$", path)) {
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getTasks())
                                 + gson.toJson(fileBackedTasksManager.getEpics())
                                 + gson.toJson(fileBackedTasksManager.getSubTasks());
@@ -97,14 +94,14 @@ public class HttpTaskServer {
 
                     //getHistory
                     if (Pattern.matches("^/tasks/history$", path)) {
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getHistory());
                     }
 
                     //getEpicSubTasks
                     if (Pattern.matches("^/tasks/subtask/epic/", path) && (query != null)) {
                         int id = Integer.parseInt(query.split("=")[1]);
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         response = gson.toJson(fileBackedTasksManager.getEpic(id).getSubTasks());
                     }
 
@@ -116,7 +113,7 @@ public class HttpTaskServer {
                         InputStream inputStream = httpExchange.getRequestBody();
                         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
                         Task task = gson.fromJson(body, Task.class);
-                        statusCode = 201;
+                        httpStatusCode = HttpStatusCode.CREATED;
                         fileBackedTasksManager.addTask(task);
                         response = "Задача создана!";
                     }
@@ -126,7 +123,7 @@ public class HttpTaskServer {
                         InputStream inputStream = httpExchange.getRequestBody();
                         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
                         Epic epic = gson.fromJson(body, Epic.class);
-                        statusCode = 201;
+                        httpStatusCode = HttpStatusCode.CREATED;
                         fileBackedTasksManager.addEpic(epic);
                         response = "Эпик создан!";
                     }
@@ -136,7 +133,7 @@ public class HttpTaskServer {
                         InputStream inputStream = httpExchange.getRequestBody();
                         String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
                         SubTask subTask = gson.fromJson(body, SubTask.class);
-                        statusCode = 201;
+                        httpStatusCode = HttpStatusCode.CREATED;
                         fileBackedTasksManager.addSubTask(subTask);
                         response = "Сабтаск создан!";
                     }
@@ -147,7 +144,7 @@ public class HttpTaskServer {
                     //delTask(id)
                     if (Pattern.matches("^/tasks/task/", path) && (query != null)) {
                         int id = Integer.parseInt(query.split("=")[1]);
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         fileBackedTasksManager.delTask(id);
                         response = "Задача удалена!";
                     }
@@ -155,7 +152,7 @@ public class HttpTaskServer {
                     //delEpic(id)
                     if (Pattern.matches("^/tasks/epic/", path) && (query != null)) {
                         int id = Integer.parseInt(query.split("=")[1]);
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         fileBackedTasksManager.delEpic(id);
                         response = "Эпик удален!";
                     }
@@ -163,7 +160,7 @@ public class HttpTaskServer {
                     //delSubTask(id)
                     if (Pattern.matches("^/tasks/subtask/", path) && (query != null)) {
                         int id = Integer.parseInt(query.split("=")[1]);
-                        statusCode = 200;
+                        httpStatusCode = HttpStatusCode.OK;
                         fileBackedTasksManager.delSubTask(id);
                         response = "Сабтаск удален!";
                     }
@@ -175,7 +172,7 @@ public class HttpTaskServer {
             }
 
             httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=" + StandardCharsets.UTF_8);
-            httpExchange.sendResponseHeaders(statusCode, 0);
+            httpExchange.sendResponseHeaders(httpStatusCode.getValue(),0);
 
             try (OutputStream os = httpExchange.getResponseBody()) {
                 os.write(response.getBytes());
@@ -191,17 +188,5 @@ public class HttpTaskServer {
 
     public void stop() {
         server.stop(1);
-    }
-
-    public static void main(String[] args) throws IOException, InterruptedException {
-
-        HTTPTaskManager httpTaskManager = Managers.getDefaultHTTPTaskManager();
-
-        HttpTaskServer httpTaskServer = new HttpTaskServer(httpTaskManager.loadFromFile(Path.of("resources/file.csv")));
-        httpTaskServer.start();
-
-        httpTaskManager.getApiToken();
-        //httpTaskManager.save();
-        httpTaskManager.load();
     }
 }
